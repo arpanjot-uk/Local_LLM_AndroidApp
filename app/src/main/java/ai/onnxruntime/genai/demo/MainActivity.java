@@ -1,9 +1,12 @@
 package ai.onnxruntime.genai.demo;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -33,12 +36,19 @@ import ai.onnxruntime.genai.demo.databinding.ActivityMainBinding;
 import ai.onnxruntime.genai.Model;
 import ai.onnxruntime.genai.Tokenizer;
 
+import io.noties.markwon.AbstractMarkwonPlugin;
+import io.noties.markwon.Markwon;
+import io.noties.markwon.core.MarkwonTheme;
+
 public class MainActivity extends AppCompatActivity implements Consumer<String> {
 
     private ActivityMainBinding binding;
     private EditText userMsgEdt;
     private Model model;
     private Tokenizer tokenizer;
+
+    private Markwon markwon;
+
     private ImageButton sendMsgIB;
     private TextView generatedTV;
     private TextView promptTV;
@@ -66,6 +76,21 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         promptTV = findViewById(R.id.user_text);
         progressText = findViewById(R.id.progress_text);
         settingsButton = findViewById(R.id.idIBSettings);
+        markwon = Markwon.builder(this)
+                .usePlugin(new AbstractMarkwonPlugin() {
+                    @Override
+                    public void configureTheme(@NonNull MarkwonTheme.Builder builder) {
+                        builder
+                                .codeTextColor(Color.parseColor("#5A5A5A")) // Inline code text color
+                                .codeBackgroundColor(Color.parseColor("#F0F0F0")) // Inline code background color
+                                .codeBlockTextColor(Color.parseColor("#5A5A5A")) // Code block text color
+                                .codeBlockBackgroundColor(Color.parseColor("#F0F0F0")) // Code block background color
+                                .codeTypeface(Typeface.MONOSPACE) // Typeface for code
+                                .build();
+                    }
+                })
+                .build();
+
 
         // Trigger the download operation when the application is created
         try {
@@ -119,6 +144,13 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                     Toast.makeText(MainActivity.this, "Please enter your message..", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+                // ** Clear accumulated text before starting a new query **
+                accumulatedText.setLength(0);
+
+                // Reset the TextView to clear the generated response
+                generatedTV.setText("");
+
 
                 String promptQuestion = userMsgEdt.getText().toString();
                 String promptQuestion_formatted = "<system>You are a helpful AI assistant. Answer in two paragraphs or less<|end|><|user|>"+promptQuestion+"<|end|>\n<assistant|>";
@@ -299,15 +331,44 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         executor.shutdown();
     }
 
+
+
+
+    // Member variable to accumulate the text as it's generated.
+    private final StringBuilder accumulatedText = new StringBuilder();
+
+
     @Override
     public void accept(String token) {
         runOnUiThread(() -> {
-            // Update and aggregate the generated text and write to text box.
-            CharSequence generated = generatedTV.getText();
-            generatedTV.setText(generated + token);
-            generatedTV.invalidate();
-            final int scrollAmount = generatedTV.getLayout().getLineTop(generatedTV.getLineCount()) - generatedTV.getHeight();
-            generatedTV.scrollTo(0, Math.max(scrollAmount, 0));
+            try {
+                // Check if the token is null or empty and skip if it is
+                if (token == null || token.isEmpty()) {
+                    Log.w(TAG, "Received null or empty token, skipping update.");
+                    return;
+                }
+
+                // Append the new token to the accumulated text
+                accumulatedText.append(token);
+
+                // Render the Markdown content in the TextView
+                markwon.setMarkdown(generatedTV, accumulatedText.toString());
+
+                // Scroll to the bottom after the layout has updated
+                generatedTV.post(() -> {
+                    if (generatedTV.getLayout() != null) {
+                        final int scrollAmount = generatedTV.getLayout().getLineTop(generatedTV.getLineCount()) - generatedTV.getHeight();
+                        generatedTV.scrollTo(0, Math.max(scrollAmount, 0));
+                    } else {
+                        Log.w(TAG, "TextView layout not ready for scrolling");
+                    }
+                });
+
+            } catch (Exception e) {
+                // Log the exception to help debug the issue
+                Log.e(TAG, "Error in accept method", e);
+                e.printStackTrace();
+            }
         });
     }
 

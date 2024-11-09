@@ -75,7 +75,7 @@ public class BottomSheet extends BottomSheetDialogFragment {
                 return;
             }
 
-            if (maxLength < 50) {
+            if (maxLength < 300) {
                 Toast.makeText(getContext(), "Max response length cannot be less than 50", Toast.LENGTH_SHORT).show();
                 return;
             }

@@ -54,4 +54,7 @@ dependencies {
     implementation("com.microsoft.onnxruntime:onnxruntime-android:latest.release")
     implementation(files("libs/onnxruntime-genai-android-0.4.0-dev.aar"))
 
+    //MarkDown
+    implementation ("io.noties.markwon:core:4.6.2")
+
 }
