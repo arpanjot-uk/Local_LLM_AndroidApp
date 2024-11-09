@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,8 +56,9 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private TextView progressText;
     private ImageButton settingsButton;
     private static final String TAG = "genai.demo.MainActivity";
-    private int maxLength = 100;
+    private int maxLength = 1000;
     private float lengthPenalty = 1.0f;
+    private String agentMode = "Fast Reasoning";
 
     private static boolean fileExists(Context context, String fileName) {
         File file = new File(context.getFilesDir(), fileName);
@@ -101,23 +103,27 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         }
 
         settingsButton.setOnClickListener(v -> {
-            // Pass the updated maxLength and lengthPenalty from MainActivity to BottomSheet
-            BottomSheet bottomSheet = BottomSheet.newInstance(maxLength, lengthPenalty);
+            // Pass the updated maxLength, lengthPenalty, and agentMode from MainActivity to BottomSheet
+            BottomSheet bottomSheet = BottomSheet.newInstance(maxLength, lengthPenalty, agentMode);
 
             bottomSheet.setSettingsListener(new BottomSheet.SettingsListener() {
                 @Override
-                public void onSettingsApplied(int maxLength, float lengthPenalty) {
+                public void onSettingsApplied(int maxLength, float lengthPenalty, String agentMode) {
                     // Update MainActivity's fields when new values are applied
                     MainActivity.this.maxLength = maxLength;
                     MainActivity.this.lengthPenalty = lengthPenalty;
+                    MainActivity.this.agentMode = agentMode; // Update agentMode as well
+
                     Log.i(TAG, "Setting max response length to: " + maxLength);
                     Log.i(TAG, "Setting length penalty to: " + lengthPenalty);
+                    Log.i(TAG, "Setting agent mode to: " + agentMode);
                 }
             });
 
             // Show the BottomSheet
             bottomSheet.show(getSupportFragmentManager(), "BottomSheet");
         });
+
 
 
 
@@ -153,7 +159,14 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
 
                 String promptQuestion = userMsgEdt.getText().toString();
-                String promptQuestion_formatted = "<system>You are a helpful AI assistant. Answer in two paragraphs or less<|end|><|user|>"+promptQuestion+"<|end|>\n<assistant|>";
+
+                String systemPrompt = "";
+                if(agentMode.equals("Fast Reasoning")){
+                 systemPrompt = "You are HumNod Lite, a helpful AI assistant developed by the HumNod LTD team in the UK. The HumNod team is led by CEO Arpanjot Singh and CTO Farhan Memon. Answer in two paragraphs or less";
+                }else if(agentMode.equals("Intense Reasoning")){
+                    systemPrompt = "You are HumNod Lite, a helpful AI assistant developed by the HumNod LTD team in the UK. The HumNod team is led by CEO Arpanjot Singh and CTO Farhan Memon. Your primary role is to assist users as a learning-oriented search engine, providing accurate, concise, and informative responses similar to resources like Google, Wikipedia, and educational sites. Your responses should be direct, factual, and easy to understand, especially when dealing with subjects like math, science, and general knowledge. Format the information as nicely as possible using Markdown, ensuring that content is well-structured and easy to read. Use headings, bullet points, code blocks, and other Markdown elements to make the presentation clear and engaging. Aim to provide the user with the most relevant and educational information, while maintaining a friendly and supportive tone.";
+                }
+                String promptQuestion_formatted = "<system>"+systemPrompt+"<|end|><|user|>"+promptQuestion+"<|end|>\n<assistant|>";
                 Log.i("GenAI: prompt question", promptQuestion_formatted);
                 setVisibility();
 
@@ -220,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                                 sendMsgIB.setAlpha(1.0f);
 
                                 // Display the token generation rate in a dialog popup
-                                showTokenPopup(promptProcessingTime, tokensPerSecond);
+                                //showTokenPopup(promptProcessingTime, tokensPerSecond);
                             });
 
                             Log.i(TAG, "Prompt processing time (first token): " + promptProcessingTime + " seconds");

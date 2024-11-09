@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Local LLM</string>
+    <string-array name="response_modes">
+        <item>Fast Reasoning</item>
+        <item>Intense Reasoning</item>
+    </string-array>
 </resources>

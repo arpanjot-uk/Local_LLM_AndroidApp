@@ -43,6 +43,12 @@
         android:padding="8dp"
         android:text="1.0" />
 
+    <Spinner
+        android:id="@+id/idSpinnerResponseMode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp" />
+
     <!-- Save Button -->
     <Button
         android:id="@+id/applySettingsButton"
