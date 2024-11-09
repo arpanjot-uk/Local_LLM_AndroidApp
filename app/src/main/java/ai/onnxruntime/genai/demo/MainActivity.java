@@ -76,18 +76,24 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         }
 
         settingsButton.setOnClickListener(v -> {
-            BottomSheet bottomSheet = new BottomSheet();
+            // Pass the updated maxLength and lengthPenalty from MainActivity to BottomSheet
+            BottomSheet bottomSheet = BottomSheet.newInstance(maxLength, lengthPenalty);
+
             bottomSheet.setSettingsListener(new BottomSheet.SettingsListener() {
                 @Override
                 public void onSettingsApplied(int maxLength, float lengthPenalty) {
+                    // Update MainActivity's fields when new values are applied
                     MainActivity.this.maxLength = maxLength;
                     MainActivity.this.lengthPenalty = lengthPenalty;
                     Log.i(TAG, "Setting max response length to: " + maxLength);
                     Log.i(TAG, "Setting length penalty to: " + lengthPenalty);
                 }
             });
+
+            // Show the BottomSheet
             bottomSheet.show(getSupportFragmentManager(), "BottomSheet");
         });
+
 
 
         Consumer<String> tokenListener = this;
