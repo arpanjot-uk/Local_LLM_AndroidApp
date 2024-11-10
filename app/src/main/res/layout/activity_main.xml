@@ -3,18 +3,71 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:paddingVertical="10dp"
+    android:paddingHorizontal="5dp"
     android:background="@color/white"
     tools:context=".MainActivity">
+
+    <!-- Container for Notch Style Buttons -->
+    <RelativeLayout
+        android:id="@+id/notchContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dp"
+        android:background="@drawable/notch_background"
+        android:padding="8dp"
+        android:elevation="8dp">
+
+        <!-- Ads Button (Left) -->
+        <ImageButton
+            android:id="@+id/idIBAds"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/rounded_button"
+            android:hapticFeedbackEnabled="true"
+            android:src="@drawable/ads"
+            android:tint="@color/white"
+            tools:ignore="UseAppTint" />
+
+
+
+        <!-- Logo (Center) -->
+        <ImageButton
+            android:id="@+id/idIBLogo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"
+            android:background="#E8ECEF"
+            android:hapticFeedbackEnabled="true"
+            android:src="@drawable/humnod"
+            tools:ignore="UseAppTint" />
+
+        <!-- Settings Button (Right) -->
+        <ImageButton
+            android:id="@+id/idIBSettings"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/rounded_button"
+            android:hapticFeedbackEnabled="true"
+            android:src="@drawable/humnod_settings"
+            android:tint="@color/white"
+            tools:ignore="UseAppTint" />
+    </RelativeLayout>
+
 
     <!-- Bubbles Section -->
     <ScrollView
         android:id="@+id/chatScrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_below="@+id/notchContainer"
         android:layout_above="@+id/inputContainer"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="16dp">
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,47 +78,49 @@
                 android:id="@+id/user_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginHorizontal="8dp"
                 android:background="@drawable/rounded_corner"
-                android:padding="8dp"
                 android:drawableStart="@drawable/frame"
                 android:drawablePadding="8dp"
+                android:padding="8dp"
                 android:textAlignment="viewStart"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textSize="16sp"
                 android:visibility="invisible"
+                tools:text="User Bubble Example"
                 tools:visibility="visible"
-                tools:text="User Bubble Example" />
+                android:elevation="8dp"/>
 
             <TextView
                 android:id="@+id/sample_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="10dp"
                 android:background="@drawable/rounded_corner2"
                 android:padding="8dp"
                 android:scrollbars="vertical"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textSize="16sp"
                 android:visibility="invisible"
-                tools:visibility="visible"
-                tools:text="Sample Bubble Example" />
+                tools:text="Sample Bubble Example"
+                tools:visibility="visible" />
 
         </LinearLayout>
     </ScrollView>
 
-    <!-- Progress Text Section -->
+    <!-- Progress Text Section (Centered) -->
     <TextView
         android:id="@+id/progress_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:text="Loading..."
-        android:layout_gravity="center_horizontal"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:layout_above="@+id/inputContainer"
         android:visibility="invisible"
         tools:visibility="visible" />
+
+
 
     <!-- Input Box and Buttons Section (fixed to bottom) -->
     <LinearLayout
@@ -73,11 +128,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
         android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:paddingTop="8dp"
         android:paddingBottom="8dp">
-
 
         <!-- EditText for Message Input -->
         <EditText
@@ -85,33 +141,34 @@
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_weight="1"
-            android:hint="Type your message here"
             android:background="@drawable/rounded_edittext_border_search"
+            android:gravity="center_vertical"
+            android:hint="Type your message here"
+            android:textColorHint="#E8ECEF"
             android:padding="12dp"
-            android:gravity="center"
             tools:ignore="Autofill" />
+
+        <!-- Attach Button -->
+        <ImageButton
+            android:id="@+id/idIBAttach"
+            android:layout_width="35dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/rounded_button"
+            android:hapticFeedbackEnabled="true"
+            android:src="@drawable/attach"
+            android:tint="@color/white"
+            tools:ignore="UseAppTint" />
 
         <!-- Send Button -->
         <ImageButton
             android:id="@+id/idIBSend"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="8dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="5dp"
             android:background="@drawable/rounded_button"
             android:hapticFeedbackEnabled="true"
             android:src="@drawable/humnod_send"
-            android:tint="@color/white"
-            tools:ignore="UseAppTint" />
-
-        <!-- Settings Button -->
-        <ImageButton
-            android:id="@+id/idIBSettings"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/rounded_button"
-            android:hapticFeedbackEnabled="true"
-            android:src="@drawable/humnod_settings"
             android:tint="@color/white"
             tools:ignore="UseAppTint" />
     </LinearLayout>
