@@ -1,67 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/white">
 
-    <!-- Max Response Length -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Max Response Length"
-        android:textSize="16sp"
-        android:textColor="@color/black"
-        android:layout_marginBottom="8dp"/>
-
-    <EditText
-        android:id="@+id/idEdtMaxLength"
+    <!-- Container for Max Response Length -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="number"
-        android:hint="Enter max response length"
-        android:text="100"
-        android:padding="8dp" />
+        android:layout_marginBottom="16dp"
+        android:padding="16dp"
+        android:background="@drawable/rounded_container">
 
-    <!-- Length Penalty -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Length Penalty"
-        android:textSize="16sp"
-        android:textColor="@color/black"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"/>
+        <!-- Max Response Length Label -->
+        <TextView
+            android:id="@+id/tvMaxLength"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Max Response Length"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/idEdtMaxLength"
+            app:layout_constraintBottom_toBottomOf="@+id/idEdtMaxLength"
+            app:layout_constraintHorizontal_chainStyle="packed" />
 
-    <EditText
-        android:id="@+id/idEdtLengthPenalty"
+        <!-- Max Response Length EditText -->
+        <EditText
+            android:id="@+id/idEdtMaxLength"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:hint="Enter max response length"
+            android:text="100"
+            android:background="@drawable/rounded_edittext_border_menu"
+            android:padding="12dp"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvMaxLength"
+            app:layout_constraintWidth_percent="0.5" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Container for Length Penalty -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter length penalty"
-        android:inputType="number|numberDecimal"
-        android:padding="8dp"
-        android:text="1.0" />
+        android:layout_marginBottom="16dp"
+        android:padding="16dp"
+        android:background="@drawable/rounded_container">
 
-    <Spinner
-        android:id="@+id/idSpinnerResponseMode"
+        <!-- Length Penalty Label -->
+        <TextView
+            android:id="@+id/tvLengthPenalty"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Length Penalty"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/idEdtLengthPenalty"
+            app:layout_constraintBottom_toBottomOf="@+id/idEdtLengthPenalty"
+            app:layout_constraintHorizontal_chainStyle="packed" />
+
+        <!-- Length Penalty EditText -->
+        <EditText
+            android:id="@+id/idEdtLengthPenalty"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="number|numberDecimal"
+            android:hint="Enter length penalty"
+            android:text="1.0"
+            android:background="@drawable/rounded_edittext_border_menu"
+            android:padding="12dp"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvLengthPenalty"
+            app:layout_constraintWidth_percent="0.5" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Container for Agent Type -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp" />
+        android:layout_marginBottom="16dp"
+        android:padding="16dp"
+        android:background="@drawable/rounded_container">
 
-    <!-- Save Button -->
-    <Button
+        <!-- Agent Type Label -->
+        <TextView
+            android:id="@+id/tvAgentType"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Agent Type"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/idSpinnerResponseMode"
+            app:layout_constraintBottom_toBottomOf="@+id/idSpinnerResponseMode"
+            app:layout_constraintHorizontal_chainStyle="packed" />
+
+        <!-- Agent Type Spinner -->
+        <Spinner
+            android:id="@+id/idSpinnerResponseMode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:background="@drawable/rounded_edittext_border_menu"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvAgentType"
+            app:layout_constraintWidth_percent="0.5" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Attach Button -->
+    <ImageButton
         android:id="@+id/applySettingsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="24dp"
-        android:background="#89CC04"
-        android:backgroundTint="#89CC04"
-        android:tint="@color/white"
-        android:padding="8dp"
-        android:text="Apply"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:visibility="visible"
-        tools:visibility="visible" />
+        android:layout_marginStart="5dp"
+        android:background="@drawable/rounded_button"
+        android:src="@drawable/apply"
+        android:contentDescription="Attach button"
+        android:hapticFeedbackEnabled="true"
+        android:visibility="visible" />
+
 </LinearLayout>

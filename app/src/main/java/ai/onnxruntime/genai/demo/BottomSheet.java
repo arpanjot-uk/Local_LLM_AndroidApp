@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -49,7 +50,7 @@ public class BottomSheet extends BottomSheetDialogFragment {
 
         maxLengthEditText = view.findViewById(R.id.idEdtMaxLength);
         lengthPenaltyEditText = view.findViewById(R.id.idEdtLengthPenalty);
-        Button applyButton = view.findViewById(R.id.applySettingsButton);
+        ImageButton applyButton = view.findViewById(R.id.applySettingsButton);
         responseModeSpinner = view.findViewById(R.id.idSpinnerResponseMode);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),

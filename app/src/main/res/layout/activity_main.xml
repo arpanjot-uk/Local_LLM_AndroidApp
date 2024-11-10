@@ -158,7 +158,9 @@
             android:hapticFeedbackEnabled="true"
             android:src="@drawable/attach"
             android:tint="@color/white"
-            tools:ignore="UseAppTint" />
+            android:visibility="gone"
+            tools:ignore="UseAppTint"
+            tools:visibility="gone" />
 
         <!-- Send Button -->
         <ImageButton
