@@ -138,14 +138,14 @@
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_weight="1"
+            android:padding="10dp"
+            android:layout_margin="18dp"
+            android:elevation="8dp"
             android:background="@drawable/rounded_edittext_border_search"
             android:gravity="center_vertical"
             android:hint="Type your message here"
             android:textColorHint="#E8ECEF"
-            tools:ignore="Autofill"
-            android:padding="10dp"
-            android:layout_margin="18dp"
-            android:elevation="8dp"/>
+            tools:ignore="Autofill" />
 
         <!-- Attach Button -->
         <ImageButton
@@ -153,9 +153,8 @@
             android:layout_width="35dp"
             android:layout_height="40dp"
             android:layout_marginRight="10dp"
-
-            android:background="@drawable/rounded_button"
             android:elevation="8dp"
+            android:background="@drawable/rounded_button"
             android:hapticFeedbackEnabled="true"
             android:src="@drawable/attach"
             android:tint="@color/white"
@@ -168,13 +167,13 @@
             android:id="@+id/idIBSend"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginRight="5dp"
+            android:elevation="8dp"
             android:background="@drawable/rounded_button"
             android:hapticFeedbackEnabled="true"
             android:src="@drawable/humnod_send"
             android:tint="@color/white"
-            tools:ignore="UseAppTint"
-            android:layout_marginRight="5dp"
-            android:elevation="8dp"/>
+            tools:ignore="UseAppTint" />
     </LinearLayout>
 
 </RelativeLayout>
