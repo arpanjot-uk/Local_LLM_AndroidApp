@@ -128,12 +128,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
+        android:layout_margin="0dp"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp">
+        android:orientation="horizontal">
 
         <!-- EditText for Message Input -->
         <EditText
@@ -145,16 +142,20 @@
             android:gravity="center_vertical"
             android:hint="Type your message here"
             android:textColorHint="#E8ECEF"
-            android:padding="12dp"
-            tools:ignore="Autofill" />
+            tools:ignore="Autofill"
+            android:padding="10dp"
+            android:layout_margin="18dp"
+            android:elevation="8dp"/>
 
         <!-- Attach Button -->
         <ImageButton
             android:id="@+id/idIBAttach"
             android:layout_width="35dp"
             android:layout_height="40dp"
-            android:layout_marginStart="5dp"
+            android:layout_marginRight="10dp"
+
             android:background="@drawable/rounded_button"
+            android:elevation="8dp"
             android:hapticFeedbackEnabled="true"
             android:src="@drawable/attach"
             android:tint="@color/white"
@@ -167,12 +168,13 @@
             android:id="@+id/idIBSend"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginStart="5dp"
             android:background="@drawable/rounded_button"
             android:hapticFeedbackEnabled="true"
             android:src="@drawable/humnod_send"
             android:tint="@color/white"
-            tools:ignore="UseAppTint" />
+            tools:ignore="UseAppTint"
+            android:layout_marginRight="5dp"
+            android:elevation="8dp"/>
     </LinearLayout>
 
 </RelativeLayout>
