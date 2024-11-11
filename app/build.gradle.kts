@@ -57,4 +57,6 @@ dependencies {
     //MarkDown
     implementation ("io.noties.markwon:core:4.6.2")
 
+    implementation ("com.google.android.gms:play-services-ads:21.0.0")
+
 }

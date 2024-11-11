@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private TextView promptTV;
     private TextView progressText;
     private ImageButton settingsButton;
+    private ImageButton adsButton;
     private static final String TAG = "genai.demo.MainActivity";
     private int maxLength = 1000;
     private float lengthPenalty = 1.0f;
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         promptTV = findViewById(R.id.user_text);
         progressText = findViewById(R.id.progress_text);
         settingsButton = findViewById(R.id.idIBSettings);
+        adsButton = findViewById(R.id.idIBAds);
         markwon = Markwon.builder(this)
                 .usePlugin(new AbstractMarkwonPlugin() {
                     @Override
@@ -101,6 +103,11 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         } catch (GenAIException e) {
             throw new RuntimeException(e);
         }
+
+        adsButton.setOnClickListener(v -> {
+            AdsBottomSheet adsBottomSheet = new AdsBottomSheet();
+            adsBottomSheet.show(getSupportFragmentManager(), "AdsBottomSheet");
+        });
 
         settingsButton.setOnClickListener(v -> {
             // Pass the updated maxLength, lengthPenalty, and agentMode from MainActivity to BottomSheet
