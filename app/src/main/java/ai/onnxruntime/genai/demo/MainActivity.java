@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,6 +57,9 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private TextView progressText;
     private ImageButton settingsButton;
     private ImageButton adsButton;
+    private ScrollView chatScrollView;
+
+
     private static final String TAG = "genai.demo.MainActivity";
     private int maxLength = 1000;
     private float lengthPenalty = 1.0f;
@@ -78,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         generatedTV = findViewById(R.id.sample_text);
         promptTV = findViewById(R.id.user_text);
         progressText = findViewById(R.id.progress_text);
+        chatScrollView = findViewById(R.id.chatScrollView);
         settingsButton = findViewById(R.id.idIBSettings);
         adsButton = findViewById(R.id.idIBAds);
         markwon = Markwon.builder(this)
@@ -374,7 +379,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 // Render the Markdown content in the TextView
                 markwon.setMarkdown(generatedTV, accumulatedText.toString());
 
-                // Scroll to the bottom after the layout has updated
+                // Scroll the TextView if necessary (this part ensures that the generatedTV moves correctly)
                 generatedTV.post(() -> {
                     if (generatedTV.getLayout() != null) {
                         final int scrollAmount = generatedTV.getLayout().getLineTop(generatedTV.getLineCount()) - generatedTV.getHeight();
@@ -384,6 +389,9 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                     }
                 });
 
+                // Scroll the ScrollView to the bottom to keep it in sync with the updated generatedTV
+                chatScrollView.post(() -> chatScrollView.fullScroll(View.FOCUS_DOWN));
+
             } catch (Exception e) {
                 // Log the exception to help debug the issue
                 Log.e(TAG, "Error in accept method", e);
@@ -391,6 +399,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             }
         });
     }
+
 
     public void setVisibility() {
         TextView view = (TextView) findViewById(R.id.user_text);

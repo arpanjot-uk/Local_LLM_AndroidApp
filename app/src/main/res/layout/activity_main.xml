@@ -67,7 +67,8 @@
         android:layout_below="@+id/notchContainer"
         android:layout_above="@+id/inputContainer"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp">
+        android:layout_marginBottom="5dp"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
