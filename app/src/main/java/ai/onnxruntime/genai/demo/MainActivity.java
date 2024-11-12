@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private ImageButton settingsButton;
     private ImageButton adsButton;
     private ScrollView chatScrollView;
-
+    private ImageButton scrollToBottomButton;
 
     private static final String TAG = "genai.demo.MainActivity";
     private int maxLength = 1000;
@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         chatScrollView = findViewById(R.id.chatScrollView);
         settingsButton = findViewById(R.id.idIBSettings);
         adsButton = findViewById(R.id.idIBAds);
+        scrollToBottomButton = findViewById(R.id.scrollToBottomButton);
         markwon = Markwon.builder(this)
                 .usePlugin(new AbstractMarkwonPlugin() {
                     @Override
@@ -135,6 +136,26 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             // Show the BottomSheet
             bottomSheet.show(getSupportFragmentManager(), "BottomSheet");
         });
+
+
+        // Set up scroll listener for chatScrollView
+        chatScrollView.getViewTreeObserver().addOnScrollChangedListener(() -> {
+            View view = chatScrollView.getChildAt(chatScrollView.getChildCount() - 1);
+            int diff = (view.getBottom() - (chatScrollView.getHeight() + chatScrollView.getScrollY()));
+
+            // If diff > 500, it means that the ScrollView is not at the bottom
+            if (diff > 500) {
+                scrollToBottomButton.setVisibility(View.VISIBLE);
+            } else {
+                scrollToBottomButton.setVisibility(View.GONE);
+            }
+        });
+
+        // Set up button click listener to scroll to bottom
+        scrollToBottomButton.setOnClickListener(v -> {
+            chatScrollView.post(() -> chatScrollView.fullScroll(View.FOCUS_DOWN));
+        });
+
 
 
 

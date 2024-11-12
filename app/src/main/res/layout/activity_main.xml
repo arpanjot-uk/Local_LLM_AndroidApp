@@ -111,6 +111,20 @@
         </LinearLayout>
     </ScrollView>
 
+    <ImageButton
+        android:id="@+id/scrollToBottomButton"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_above="@id/inputContainer"
+        android:elevation="8dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/rounded_button"
+        android:src="@drawable/bottom_up"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+
     <!-- Progress Text Section (Centered) -->
     <TextView
         android:id="@+id/progress_text"
@@ -120,7 +134,6 @@
         android:text="Loading..."
         android:visibility="invisible"
         tools:visibility="visible" />
-
 
 
     <!-- Input Box and Buttons Section (fixed to bottom) -->
