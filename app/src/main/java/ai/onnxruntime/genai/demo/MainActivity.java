@@ -256,7 +256,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 setVisibility();
 
                 // Disable send button while responding to prompt.
-                sendMsgIB.setAlpha(0.5f);
                 sendMsgIB.setImageResource(R.drawable.stop_button); // Change icon to indicate "Stop"
                 isGenerating = true;
 
@@ -317,13 +316,14 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                             float promptProcessingTime = (firstTokenTime - startTime)/ 1000.0f;
                             float tokensPerSecond = (1000 * (numTokens -1)) / totalTime;
 
-                            runOnUiThread(() -> {
-                                sendMsgIB.setEnabled(true);
-                                sendMsgIB.setAlpha(1.0f);
+                        //THIS WAS REMOVED AS WAS USED TO READABLE THE BUTTON AFTER GENERATION
+                           // runOnUiThread(() -> {
+                                //sendMsgIB.setEnabled(true);
+                                //sendMsgIB.setAlpha(1.0f);
 
                                 // Display the token generation rate in a dialog popup
                                 //showTokenPopup(promptProcessingTime, tokensPerSecond);
-                            });
+                           // });
 
                             Log.i(TAG, "Prompt processing time (first token): " + promptProcessingTime + " seconds");
                             Log.i(TAG, "Tokens generated per second (excluding prompt processing): " + tokensPerSecond);
