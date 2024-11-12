@@ -8,6 +8,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.Pair;
@@ -157,6 +159,33 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         // Set up button click listener to scroll to bottom
         scrollToBottomButton.setOnClickListener(v -> {
             chatScrollView.post(() -> chatScrollView.fullScroll(View.FOCUS_DOWN));
+        });
+
+        //Checking if the search filed is empty or not.
+        userMsgEdt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                // No need to implement
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                // Enable or disable send button based on text presence, only when not generating
+                if (!isGenerating) {
+                    if (charSequence.toString().trim().isEmpty()) {
+                        sendMsgIB.setEnabled(false);
+                        sendMsgIB.setAlpha(0.5f);
+                    } else {
+                        sendMsgIB.setEnabled(true);
+                        sendMsgIB.setAlpha(1.0f);
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                // No need to implement
+            }
         });
 
 
@@ -311,8 +340,8 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
                         runOnUiThread(() -> {
                             // Reset button and state after generation is done or stopped
-                            sendMsgIB.setEnabled(true);
-                            sendMsgIB.setAlpha(1.0f);
+                            sendMsgIB.setEnabled(false);
+                            sendMsgIB.setAlpha(0.5f);
                             sendMsgIB.setImageResource(R.drawable.humnod_send); // Change icon back to "Send"
                             isGenerating = false;
 
