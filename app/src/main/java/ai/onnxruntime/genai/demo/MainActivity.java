@@ -183,6 +183,10 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                         sendMsgIB.setEnabled(true);
                         sendMsgIB.setAlpha(1.0f);
                         sendMsgIB.setImageResource(R.drawable.humnod_send); // Change icon back to "Send"
+
+                        // Enable EditText and restore appearance
+                        userMsgEdt.setEnabled(true);
+                        userMsgEdt.setAlpha(1.0f);  // Make it opaque again to show it is active
                     });
 
                     return;
@@ -226,6 +230,9 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 sendMsgIB.setAlpha(0.5f);
                 sendMsgIB.setImageResource(R.drawable.stop_button); // Change icon to indicate "Stop"
                 isGenerating = true;
+
+                userMsgEdt.setEnabled(false); // Disable input field to prevent editing
+                userMsgEdt.setAlpha(0.5f);  // Make it visually lighter to show it is disabled
 
                 promptTV.setText(promptQuestion);
                 // Clear Edit Text or prompt question.
@@ -308,6 +315,10 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                             sendMsgIB.setAlpha(1.0f);
                             sendMsgIB.setImageResource(R.drawable.humnod_send); // Change icon back to "Send"
                             isGenerating = false;
+
+                            // Enable EditText and restore appearance
+                            userMsgEdt.setEnabled(true);
+                            userMsgEdt.setAlpha(1.0f);  // Make it opaque again to show it is active
                         });
                     }
                 }).start();
