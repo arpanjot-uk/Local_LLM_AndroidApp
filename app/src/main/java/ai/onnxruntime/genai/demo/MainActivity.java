@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private ScrollView chatScrollView;
     private ImageButton scrollToBottomButton;
 
+    private boolean isGenerating;
+
     private static final String TAG = "genai.demo.MainActivity";
     private int maxLength = 1000;
     private float lengthPenalty = 1.0f;
@@ -86,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         settingsButton = findViewById(R.id.idIBSettings);
         adsButton = findViewById(R.id.idIBAds);
         scrollToBottomButton = findViewById(R.id.scrollToBottomButton);
+        isGenerating = false;
         markwon = Markwon.builder(this)
                 .usePlugin(new AbstractMarkwonPlugin() {
                     @Override
@@ -170,6 +173,22 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         sendMsgIB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if (isGenerating) {
+                    // If generation is in progress, set the flag to stop it
+                    isGenerating = false;
+
+                    // Reset button to original state after stopping
+                    runOnUiThread(() -> {
+                        sendMsgIB.setEnabled(true);
+                        sendMsgIB.setAlpha(1.0f);
+                        sendMsgIB.setImageResource(R.drawable.humnod_send); // Change icon back to "Send"
+                    });
+
+                    return;
+                }
+
+
                 if (tokenizer == null) {
                     // if user tries to submit prompt while model is still downloading, display a toast message.
                     Toast.makeText(MainActivity.this, "Model not loaded yet, please wait...", Toast.LENGTH_SHORT).show();
@@ -204,8 +223,9 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 setVisibility();
 
                 // Disable send button while responding to prompt.
-                sendMsgIB.setEnabled(false);
                 sendMsgIB.setAlpha(0.5f);
+                sendMsgIB.setImageResource(R.drawable.stop_button); // Change icon to indicate "Stop"
+                isGenerating = true;
 
                 promptTV.setText(promptQuestion);
                 // Clear Edit Text or prompt question.
@@ -238,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                             long firstTokenTime = startTime;
                             long currentTime = startTime;
                             int numTokens = 0;
-                            while (!generator.isDone()) {
+                            while (!generator.isDone() && isGenerating) {
                                 generator.computeLogits();
                                 generator.generateNextToken();
                  
@@ -283,8 +303,11 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                         }
 
                         runOnUiThread(() -> {
+                            // Reset button and state after generation is done or stopped
                             sendMsgIB.setEnabled(true);
                             sendMsgIB.setAlpha(1.0f);
+                            sendMsgIB.setImageResource(R.drawable.humnod_send); // Change icon back to "Send"
+                            isGenerating = false;
                         });
                     }
                 }).start();
