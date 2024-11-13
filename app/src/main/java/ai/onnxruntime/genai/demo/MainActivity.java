@@ -389,7 +389,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         }
         if (urlFilePairs.isEmpty()) {
             // Display a message using Toast
-            Toast.makeText(this, "All files already exist. Skipping download.", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "All files already exist. Skipping download.");
             model = new Model(getFilesDir().getPath());
             tokenizer = model.createTokenizer();
