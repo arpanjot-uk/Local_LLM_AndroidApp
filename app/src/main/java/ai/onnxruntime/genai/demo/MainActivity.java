@@ -76,6 +76,10 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         return file.exists();
     }
 
+    private int getScaledTextSize(float sp) {
+        return Math.round(sp * getResources().getDisplayMetrics().scaledDensity);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                                 .codeBlockTextColor(Color.parseColor("#5A5A5A")) // Code block text color
                                 .codeBlockBackgroundColor(Color.parseColor("#F0F0F0")) // Code block background color
                                 .codeTypeface(Typeface.MONOSPACE) // Typeface for code
+                                .codeBlockTextSize(getScaledTextSize(12)) // Set code block text size (in SP, 12sp in this example)
                                 .build();
                     }
                 })
