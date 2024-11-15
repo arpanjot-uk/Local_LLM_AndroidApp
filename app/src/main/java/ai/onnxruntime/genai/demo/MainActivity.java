@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private TextView generatedTV;
     private TextView promptTV;
     private TextView progressText;
+    private ProgressBar progressBar;
     private ImageButton settingsButton;
     private ImageButton adsButton;
     private ScrollView chatScrollView;
@@ -86,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         generatedTV = findViewById(R.id.sample_text);
         promptTV = findViewById(R.id.user_text);
         progressText = findViewById(R.id.progress_text);
+        progressBar = findViewById(R.id.progress_bar);
         chatScrollView = findViewById(R.id.chatScrollView);
         settingsButton = findViewById(R.id.idIBSettings);
         adsButton = findViewById(R.id.idIBAds);
@@ -395,8 +398,13 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             return;
         }
 
-        progressText.setText("Downloading...");
-        progressText.setVisibility(View.VISIBLE);
+        // Set ProgressBar and ProgressText visibility to visible and reset progress
+        runOnUiThread(() -> {
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(0);
+            progressText.setVisibility(View.VISIBLE);
+            progressText.setText("Downloading...");
+        });
 
         Toast.makeText(this,
                 "Downloading model for the app... Model Size greater than 2GB, please allow a few minutes to download.",
@@ -412,6 +420,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                     if (pctDone > lastPctDone) {
                         Log.d(TAG, "Downloading files: " + pctDone + "%");
                         runOnUiThread(() -> {
+                            progressBar.setProgress((int) pctDone);
                             progressText.setText("Downloading: " + pctDone + "%");
                         });
                     }
@@ -426,7 +435,8 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                         tokenizer = model.createTokenizer();
                         runOnUiThread(() -> {
                             Toast.makeText(context, "All downloads completed", Toast.LENGTH_SHORT).show();
-                            progressText.setVisibility(View.INVISIBLE);
+                            progressBar.setVisibility(View.INVISIBLE); // Hide the progress bar when done
+                            progressText.setVisibility(View.INVISIBLE); // Hide the progress text when done
                         });
                     } catch (GenAIException e) {
                         e.printStackTrace();

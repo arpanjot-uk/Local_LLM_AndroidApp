@@ -125,15 +125,40 @@
         tools:visibility="visible" />
 
 
-    <!-- Progress Text Section (Centered) -->
-    <TextView
-        android:id="@+id/progress_text"
+    <!-- Container for Progress Text and Progress Bar (Centered) -->
+    <LinearLayout
+        android:id="@+id/progressContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="Loading..."
-        android:visibility="invisible"
-        tools:visibility="visible" />
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Progress Text Section -->
+        <TextView
+            android:id="@+id/progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading..."
+            android:visibility="invisible"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            tools:visibility="visible"
+            android:layout_marginBottom="10dp" />
+
+        <!-- Progress Bar Section (Below Progress Text) -->
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:progressBackgroundTint="#E8ECEF"
+            android:progressTint="#176379"
+            android:indeterminate="false"
+            android:max="100"
+            android:visibility="invisible"
+            tools:visibility="visible" />
+    </LinearLayout>
 
 
     <!-- Input Box and Buttons Section (fixed to bottom) -->
