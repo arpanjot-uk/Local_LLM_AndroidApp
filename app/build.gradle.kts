@@ -9,9 +9,9 @@ android {
     defaultConfig {
         applicationId = "ai.onnxruntime.genai.demo"
         minSdk = 27
-        targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
+        targetSdk = 34
+        versionCode = 3
+        versionName = "1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
