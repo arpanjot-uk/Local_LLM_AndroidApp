@@ -3,6 +3,8 @@ package ai.onnxruntime.genai.demo;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -80,12 +82,51 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         return Math.round(sp * getResources().getDisplayMetrics().scaledDensity);
     }
 
+    // Method to check if the device has at least a certain amount of RAM (in GB)
+    private boolean hasMinimumRam(int minRamInGb) {
+        ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
+        activityManager.getMemoryInfo(memoryInfo);
+
+        long totalRamInBytes = memoryInfo.totalMem;
+        long minRamInBytes = minRamInGb * 1024L * 1024L * 1024L; // Convert GB to Bytes
+
+        return totalRamInBytes >= minRamInBytes;
+    }
+
+    // Method to show a warning dialog and exit the app
+    private void showRamWarningAndExit() {
+        // Inflate the custom layout
+        View dialogView = getLayoutInflater().inflate(R.layout.warning_dialog_layout, null);
+
+        // Create the AlertDialog with the custom view
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+
+        // Find the button and set the click listener to exit the app
+        ImageButton exitButton = dialogView.findViewById(R.id.applySettingsButton);
+        exitButton.setOnClickListener(v -> {
+            finish(); // Close the app
+        });
+
+        // Show the dialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setCancelable(false); // Prevent closing the dialog without action
+        alertDialog.show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // Check if the device has the required RAM (e.g., 6 GB)
+        if (!hasMinimumRam(5)) {
+            showRamWarningAndExit();
+            return;
+        }
 
         sendMsgIB = findViewById(R.id.idIBSend);
         userMsgEdt = findViewById(R.id.idEdtMessage);
