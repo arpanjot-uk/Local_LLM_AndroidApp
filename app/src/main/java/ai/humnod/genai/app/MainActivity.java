@@ -1,4 +1,4 @@
-package ai.onnxruntime.genai.demo;
+package ai.humnod.genai.app;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,7 +22,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +38,7 @@ import ai.onnxruntime.genai.Generator;
 import ai.onnxruntime.genai.GeneratorParams;
 import ai.onnxruntime.genai.Sequences;
 import ai.onnxruntime.genai.TokenizerStream;
-import ai.onnxruntime.genai.demo.databinding.ActivityMainBinding;
+import ai.humnod.genai.app.databinding.ActivityMainBinding;
 import ai.onnxruntime.genai.Model;
 import ai.onnxruntime.genai.Tokenizer;
 
@@ -68,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
     private boolean isGenerating;
 
-    private static final String TAG = "genai.demo.MainActivity";
+    private static final String TAG = "genai.app.MainActivity";
     private int maxLength = 2000;
     private float lengthPenalty = 1.0f;
     private String agentMode = "Fast Reasoning";

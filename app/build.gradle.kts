@@ -3,15 +3,15 @@ plugins {
 }
 
 android {
-    namespace = "ai.onnxruntime.genai.demo"
+    namespace = "ai.humnod.genai.app"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "ai.onnxruntime.genai.demo"
+        applicationId = "ai.humnod.genai.app"
         minSdk = 27
         targetSdk = 34
-        versionCode = 3
-        versionName = "1.2"
+        versionCode = 1
+        versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

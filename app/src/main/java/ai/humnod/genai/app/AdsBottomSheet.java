@@ -1,4 +1,4 @@
-package ai.onnxruntime.genai.demo;
+package ai.humnod.genai.app;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
