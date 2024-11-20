@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private float lengthPenalty = 1.0f;
     private String agentMode = "Fast Reasoning";
 
+    private boolean isCharLimitOn;
+
     private static boolean fileExists(Context context, String fileName) {
         File file = new File(context.getFilesDir(), fileName);
         return file.exists();
@@ -138,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         adsButton = findViewById(R.id.idIBAds);
         scrollToBottomButton = findViewById(R.id.scrollToBottomButton);
         isGenerating = false;
+        isCharLimitOn = false;
         markwon = Markwon.builder(this)
                 .usePlugin(new AbstractMarkwonPlugin() {
                     @Override
@@ -219,10 +222,15 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 // Enable or disable send button based on text presence, only when not generating
+                // Enable or disable the send button based on text length
                 if (!isGenerating) {
-                    if (charSequence.toString().trim().isEmpty()) {
+                    if (charSequence.toString().trim().length() < 12) {
                         sendMsgIB.setEnabled(false);
                         sendMsgIB.setAlpha(0.5f);
+                        if (!isCharLimitOn) {
+                            isCharLimitOn = true;
+                            Toast.makeText(MainActivity.this, "Please enter at least 12 characters.", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         sendMsgIB.setEnabled(true);
                         sendMsgIB.setAlpha(1.0f);
@@ -295,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
                 String systemPrompt = "";
                 if(agentMode.equals("Fast Reasoning")){
-                 systemPrompt = "You name is HumNod Lite, an AI assistant by UK-based HumNod LTD, led by CEO Arpanjot Singh and CTO Farhan Memon. Your goal is to provide helpful and concise responses, preferably in two paragraphs or less.";
+                 systemPrompt = "You are HumNod Lite, an AI assistant developed by UK-based HumNod LTD, led by CEO Arpanjot Singh and CTO Farhan Memon. Your goal is to provide helpful responses quickly while maintaining clarity and accuracy. Aim to keep answers concise, ideally within two paragraphs, to ensure users receive prompt and effective assistance.";
                 }else if(agentMode.equals("Intense Reasoning")){
                     systemPrompt = "You name is HumNod Lite, a helpful AI assistant developed by the HumNod LTD team in the UK. The HumNod team is led by CEO Arpanjot Singh and CTO Farhan Memon. Your primary role is to assist users as a learning-oriented search engine, providing accurate, concise, and informative responses similar to resources like Google, Wikipedia, and educational sites. Your responses should be direct, factual, and easy to understand, especially when dealing with subjects like math, science, and general knowledge. Format the information as nicely as possible using Markdown, ensuring that content is well-structured and easy to read. Use headings, bullet points, code blocks, and other Markdown elements to make the presentation clear and engaging. For visualizations, ensure they are small enough to fit comfortably on an average smartphone screen size of 6 inches, making them easy to view and interact with on mobile devices. Aim to provide the user with the most relevant and educational information, while maintaining a friendly and supportive tone.";
                 }
