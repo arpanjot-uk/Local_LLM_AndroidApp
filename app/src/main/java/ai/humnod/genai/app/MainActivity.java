@@ -2,13 +2,18 @@ package ai.humnod.genai.app;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -74,6 +79,10 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
     private boolean isCharLimitOn;
 
+    private static final int PERMISSION_REQUEST_CODE = 100;
+
+    private boolean hasAllPermissions = false;
+
     private static boolean fileExists(Context context, String fileName) {
         File file = new File(context.getFilesDir(), fileName);
         return file.exists();
@@ -116,6 +125,42 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         alertDialog.show();
     }
 
+    // Function to check and request permissions
+    private void checkAndRequestPermissions() {
+        List<String> permissionsNeeded = new ArrayList<>();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // For Android 13 and above
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_MEDIA_IMAGES)
+                    != PackageManager.PERMISSION_GRANTED) {
+                permissionsNeeded.add(android.Manifest.permission.READ_MEDIA_IMAGES);
+            }
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_MEDIA_VIDEO)
+                    != PackageManager.PERMISSION_GRANTED) {
+                permissionsNeeded.add(android.Manifest.permission.READ_MEDIA_VIDEO);
+            }
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_MEDIA_AUDIO)
+                    != PackageManager.PERMISSION_GRANTED) {
+                permissionsNeeded.add(android.Manifest.permission.READ_MEDIA_AUDIO);
+            }
+        } else {
+            // For Android versions below 13
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                permissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+        }
+
+        if (!permissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this,
+                    permissionsNeeded.toArray(new String[0]),
+                    PERMISSION_REQUEST_CODE);
+        } else {
+            hasAllPermissions = true;
+            // Proceed with your app logic that requires permissions
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,6 +173,9 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             showRamWarningAndExit();
             return;
         }
+
+        // Check and request necessary permissions
+        checkAndRequestPermissions();
 
         sendMsgIB = findViewById(R.id.idIBSend);
         userMsgEdt = findViewById(R.id.idEdtMessage);
@@ -569,6 +617,27 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         closeBtn.setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
+    }
+
+
+    // Handle the user's response to the permission request
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            boolean allGranted = true;
+            for (int result : grantResults) {
+                allGranted &= (result == PackageManager.PERMISSION_GRANTED);
+            }
+            if (allGranted) {
+                hasAllPermissions = true;
+                // Proceed with accessing files
+            } else {
+                Toast.makeText(this, "Permissions are required to access media files.", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
 
