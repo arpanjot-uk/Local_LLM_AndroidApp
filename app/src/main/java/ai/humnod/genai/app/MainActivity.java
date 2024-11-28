@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private Markwon markwon;
 
     private ImageButton sendMsgIB;
+    private ImageButton attachFileIB;
     private TextView generatedTV;
     private TextView promptTV;
     private TextView progressText;
@@ -178,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         checkAndRequestPermissions();
 
         sendMsgIB = findViewById(R.id.idIBSend);
+        attachFileIB = findViewById(R.id.idIBAttach);
         userMsgEdt = findViewById(R.id.idEdtMessage);
         generatedTV = findViewById(R.id.sample_text);
         promptTV = findViewById(R.id.user_text);
@@ -275,13 +277,22 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                     if (charSequence.toString().trim().length() < 12) {
                         sendMsgIB.setEnabled(false);
                         sendMsgIB.setAlpha(0.5f);
+
                         if (!isCharLimitOn) {
                             isCharLimitOn = true;
                             Toast.makeText(MainActivity.this, "Please enter at least 12 characters.", Toast.LENGTH_SHORT).show();
                         }
+
+                        attachFileIB.setEnabled(false); // Disable input field to prevent editing
+                        attachFileIB.setAlpha(0.5f);  // Make it visually lighter to show it is disabled
                     } else {
                         sendMsgIB.setEnabled(true);
                         sendMsgIB.setAlpha(1.0f);
+
+                        if(hasAllPermissions){
+                            attachFileIB.setEnabled(true); // Disable input field to prevent editing
+                            attachFileIB.setAlpha(1.0f);  // Make it visually lighter to show it is disabled
+                        }
                     }
                 }
             }
@@ -308,20 +319,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             public void onClick(View v) {
 
                 if (isGenerating) {
-                    // If generation is in progress, set the flag to stop it
                     isGenerating = false;
-
-                    // Reset button to original state after stopping
-                    runOnUiThread(() -> {
-                        sendMsgIB.setEnabled(true);
-                        sendMsgIB.setAlpha(1.0f);
-                        sendMsgIB.setImageResource(R.drawable.humnod_send); // Change icon back to "Send"
-
-                        // Enable EditText and restore appearance
-                        userMsgEdt.setEnabled(true);
-                        userMsgEdt.setAlpha(1.0f);  // Make it opaque again to show it is active
-                    });
-
                     return;
                 }
 
@@ -336,7 +334,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 // by user is empty or not.
                 if (userMsgEdt.getText().toString().isEmpty()) {
                     // if the edit text is empty display a toast message.
-                    Toast.makeText(MainActivity.this, "Please enter your message..", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Please enter your message...", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -362,6 +360,9 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 // Disable send button while responding to prompt.
                 sendMsgIB.setImageResource(R.drawable.stop_button); // Change icon to indicate "Stop"
                 isGenerating = true;
+
+                attachFileIB.setEnabled(false); // Disable input field to prevent editing
+                attachFileIB.setAlpha(0.5f);  // Make it visually lighter to show it is disabled
 
                 userMsgEdt.setEnabled(false); // Disable input field to prevent editing
                 userMsgEdt.setAlpha(0.5f);  // Make it visually lighter to show it is disabled
@@ -443,11 +444,15 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                         }
 
                         runOnUiThread(() -> {
+                            isGenerating = false;
+
                             // Reset button and state after generation is done or stopped
                             sendMsgIB.setEnabled(false);
                             sendMsgIB.setAlpha(0.5f);
                             sendMsgIB.setImageResource(R.drawable.humnod_send); // Change icon back to "Send"
-                            isGenerating = false;
+
+                            attachFileIB.setEnabled(false); // Disable input field to prevent editing
+                            attachFileIB.setAlpha(0.5f);  // Make it visually lighter to show it is disabled
 
                             // Enable EditText and restore appearance
                             userMsgEdt.setEnabled(true);
@@ -504,7 +509,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setProgress(0);
             progressText.setVisibility(View.VISIBLE);
-            progressText.setText("Downloading...");
+            progressText.setText("Downloading HumNod Lite Model...");
         });
 
         Toast.makeText(this,
@@ -519,23 +524,23 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                     long lastPctDone = 100 * lastBytesRead / bytesTotal;
                     long pctDone = 100 * bytesRead / bytesTotal;
                     if (pctDone > lastPctDone) {
-                        Log.d(TAG, "Downloading files: " + pctDone + "%");
+                        Log.d(TAG, "Downloading HumNod Lite: " + pctDone + "%");
                         runOnUiThread(() -> {
                             progressBar.setProgress((int) pctDone);
-                            progressText.setText("Downloading: " + pctDone + "%");
+                            progressText.setText("Downloading HumNod Lite: " + pctDone + "%");
                         });
                     }
                 }
                 @Override
                 public void onDownloadComplete() {
-                    Log.d(TAG, "All downloads completed.");
+                    Log.d(TAG, "HumNod Lite download completed");
 
                     // Last download completed, create SimpleGenAI
                     try {
                         model = new Model(getFilesDir().getPath());
                         tokenizer = model.createTokenizer();
                         runOnUiThread(() -> {
-                            Toast.makeText(context, "All downloads completed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "HumNod Lite download completed", Toast.LENGTH_SHORT).show();
                             progressBar.setVisibility(View.INVISIBLE); // Hide the progress bar when done
                             progressText.setVisibility(View.INVISIBLE); // Hide the progress text when done
                         });
@@ -633,6 +638,8 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 hasAllPermissions = true;
                 // Proceed with accessing files
             } else {
+                attachFileIB.setEnabled(false); // Disable input field to prevent editing
+                attachFileIB.setAlpha(0.5f);  // Make it visually lighter to show it is disabled
                 Toast.makeText(this, "Permissions are required to access media files.", Toast.LENGTH_SHORT).show();
             }
         } else {

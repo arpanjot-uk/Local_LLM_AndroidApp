@@ -182,7 +182,7 @@
             android:elevation="8dp"
             android:background="@drawable/rounded_edittext_border_search"
             android:gravity="center_vertical"
-            android:hint="Type your message here"
+            android:hint="Type your message"
             android:textColorHint="#E8ECEF"
             tools:ignore="Autofill" />
 
@@ -192,14 +192,14 @@
             android:layout_width="35dp"
             android:layout_height="40dp"
             android:layout_marginRight="10dp"
-            android:elevation="8dp"
             android:background="@drawable/rounded_button"
+            android:elevation="8dp"
             android:hapticFeedbackEnabled="true"
             android:src="@drawable/attach"
             android:tint="@color/white"
-            android:visibility="gone"
-            tools:ignore="UseAppTint"
-            tools:visibility="gone" />
+            android:enabled="false"
+            android:alpha="0.5"
+            tools:ignore="UseAppTint" />
 
         <!-- Send Button -->
         <ImageButton

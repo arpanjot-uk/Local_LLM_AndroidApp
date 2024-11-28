@@ -29,9 +29,8 @@
         android:layout_below="@id/close_button"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:background="@drawable/rounded_container"
-        android:padding="16dp"
-        android:elevation="8dp">
+        android:background="@color/white"
+        android:padding="16dp">
 
         <!-- Thank You Message -->
         <TextView
@@ -39,10 +38,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:textColor="@color/black"
+            android:textColor="#176379"
+            android:textStyle="bold"
             android:gravity="center"
             android:layout_centerInParent="true"
-            tools:text="Thank you for donating your time!" />
+            tools:text="Thank you for donating your time! :)" />
     </RelativeLayout>
 
     <!-- Container for Google Ads -->
