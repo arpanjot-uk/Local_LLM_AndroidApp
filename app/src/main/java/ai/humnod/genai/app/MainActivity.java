@@ -117,8 +117,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             attachFileIB.setImageResource(R.drawable.attached);
 
             if (mimeType.startsWith("image/")) {
-                // Handle image file
-                attachmentContent = "\nThe user has uploaded an image. Use the information extracted through OCR and image classification tools to interpret and respond as if observing the image directly. Craft responses that are natural, contextually relevant, and descriptive, as though you are 'seeing' the image through the provided data.\n";
+                attachmentContent += "\nUser has uploaded an image and the extracted information is provided below. Craft an responses based on the data and user query without mentioning OCR:\n";
                 // Handle image file
                 processImage(uri);
 
@@ -155,12 +154,28 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             ocrHelper.recognizeTextFromImage(bitmap, new OCRHelper.OCRCallback() {
                 @Override
                 public void onSuccess(String text) {
-                    attachmentContent += "<Image text>\n" + text;
+                    // Split the extracted text into lines
+                    String[] lines = text.split("\\r?\\n");
+
+                    // Filter out empty lines, trim spaces, and convert to lowercase
+                    List<String> filteredLines = new ArrayList<>();
+                    for (String line : lines) {
+                        line = line.trim().toLowerCase(); // Convert to lowercase
+                        if (!line.isEmpty()) {
+                            filteredLines.add(line);
+                        }
+                    }
+
+                    // Join the filtered lines with commas
+                    String commaSeparatedText = String.join(", ", filteredLines);
+
+                    // Append the result to attachmentContent
+                    attachmentContent += commaSeparatedText;
                 }
 
                 @Override
                 public void onFailure(Exception e) {
-                    attachmentContent += "<Image text\n" + "Text recognition failed";
+                    attachmentContent += "Text recognition failed";
                 }
             });
 
@@ -452,11 +467,11 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
                 String systemPrompt = "";
                 if(agentMode.equals("Assistant")){
-                 systemPrompt = "You are HumNod Lite, an AI assistant created by the UK-based company HumNod LTD, led by CEO Arpanjot Singh and CTO Farhan Memon. Your main goal is to assist users by answering their queries with clarity, accuracy, and a friendly tone. Strive to understand their needs and provide thoughtful, helpful responses that address their concerns.";
+                    systemPrompt = "You are HumNod Lite, an AI assistant developed by UK-based HumNod LTD, led by CEO Arpanjot Singh and CTO Farhan Memon. Your primary objective is to assist users by addressing their queries with clarity, precision, and a friendly tone. Focus exclusively on the user's query, avoiding unnecessary details. Ensure responses are well-organized, divided into clear paragraphs to enhance readability.";
                 }else if(agentMode.equals("Academic")){
-                    systemPrompt = "You name is HumNod Lite, a helpful AI assistant developed by the HumNod LTD team in the UK. The HumNod team is led by CEO Arpanjot Singh and CTO Farhan Memon. Your primary role is to assist users as a learning-oriented search engine, providing accurate, concise, and informative responses similar to resources like Google, Wikipedia, and educational sites. Your responses should be direct, factual, and easy to understand, especially when dealing with subjects like math, science, and general knowledge. Format the information as nicely as possible using Markdown, ensuring that content is well-structured and easy to read. Use headings, bullet points, code blocks, and other Markdown elements to make the presentation clear and engaging. For visualizations, ensure they are small enough to fit comfortably on an average smartphone screen size of 6 inches, making them easy to view and interact with on mobile devices. Aim to provide the user with the most relevant and educational information, while maintaining a friendly and supportive tone.";
+                    systemPrompt = "You are HumNod Lite, an AI assistant developed by UK-based HumNod LTD, led by CEO Arpanjot Singh and CTO Farhan Memon. Your primary role is to assist users as a learning-oriented search engine, providing accurate, concise, and informative responses similar to resources like Google, Wikipedia, and educational sites. Your responses should be direct, factual, and easy to understand, especially when dealing with subjects like math, science, and general knowledge. Format the information as nicely as possible using Markdown, ensuring that content is well-structured and easy to read. Use headings, bullet points, code blocks, and other Markdown elements to make the presentation clear and engaging. Aim to provide the user with the most relevant and educational information, while maintaining a friendly and supportive tone.";
                 }
-                String promptQuestion_formatted = "<system>" + systemPrompt + "<|end|>\n<|user|> "+promptQuestion+attachmentContent+"<|end|>\n"+"<assistant|> ";
+                String promptQuestion_formatted = "<|system|>" + systemPrompt + "<|end|>\n<|user|> "+promptQuestion+attachmentContent+"<|end|>\n"+"<|assistant|> ";
                 Log.i("GenAI: prompt question", promptQuestion_formatted);
                 setVisibility();
 
