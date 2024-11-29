@@ -1,6 +1,7 @@
 package ai.humnod.genai.app;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -10,11 +11,16 @@ import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.ImageDecoder;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
@@ -31,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -84,9 +91,80 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
     private boolean hasAllPermissions = false;
 
+    //
+    private String attachmentContent;
+    private static final String[] SUPPORTED_MIME_TYPES = {
+            "application/pdf",
+            "text/plain",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "image/*"
+    };
+    private static final int PICK_DOCUMENT_REQUEST_CODE = 102;
+    // Global variable to store the selected file's URI
+    private Uri selectedFileUri;
+    private OCRHelper ocrHelper;
+
     private static boolean fileExists(Context context, String fileName) {
         File file = new File(context.getFilesDir(), fileName);
         return file.exists();
+    }
+
+    private void handleSelectedFile(Uri uri) {
+        String mimeType = getContentResolver().getType(uri);
+        if (mimeType != null) {
+            if (mimeType.startsWith("image/")) {
+                // Handle image file
+                attachmentContent = "\nThe user has uploaded an image. Use the information extracted through OCR and image classification tools to interpret and respond as if observing the image directly. Craft responses that are natural, contextually relevant, and descriptive, as though you are 'seeing' the image through the provided data.\n";
+                // Handle image file
+                processImage(uri);
+
+            } else if (mimeType.equals("application/pdf") ||
+                    mimeType.equals("text/plain") ||
+                    mimeType.equals("application/msword") ||
+                    mimeType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+                // Handle document file
+
+            } else {
+                Toast.makeText(this, "Unsupported file type.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void openDocumentPicker() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, SUPPORTED_MIME_TYPES);
+        startActivityForResult(intent, PICK_DOCUMENT_REQUEST_CODE);
+    }
+
+    private void processImage(Uri uri) {
+        try {
+            Bitmap bitmap;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(getContentResolver(), uri));
+            } else {
+                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+            }
+
+
+            ocrHelper.recognizeTextFromImage(bitmap, new OCRHelper.OCRCallback() {
+                @Override
+                public void onSuccess(String text) {
+                    attachmentContent += "<Image text>\n" + text;
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    attachmentContent += "<Image text\n" + "Text recognition failed";
+                }
+            });
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private int getScaledTextSize(float sp) {
@@ -206,6 +284,8 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                     }
                 })
                 .build();
+        attachmentContent = "";
+        ocrHelper = new OCRHelper(this);
 
 
         // Trigger the download operation when the application is created
@@ -304,6 +384,19 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         });
 
 
+        // Set up attach button
+        attachFileIB.setOnClickListener(v -> {
+            if (hasAllPermissions) {
+                attachmentContent = "";
+                openDocumentPicker();
+            } else {
+                Toast.makeText(this, "Permissions are required to access files.", Toast.LENGTH_SHORT).show();
+                checkAndRequestPermissions();
+            }
+        });
+
+
+
 
 
 
@@ -349,13 +442,16 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
                 String systemPrompt = "";
                 if(agentMode.equals("Fast Reasoning")){
-                 systemPrompt = "You are HumNod Lite, an AI assistant developed by UK-based HumNod LTD, led by CEO Arpanjot Singh and CTO Farhan Memon. Your goal is to provide helpful responses quickly while maintaining clarity and accuracy. Aim to keep answers concise, ideally within two paragraphs, to ensure users receive prompt and effective assistance.";
+                 systemPrompt = "You are HumNod Lite, an AI assistant created by the UK-based company HumNod LTD, led by CEO Arpanjot Singh and CTO Farhan Memon. Your main goal is to assist users by answering their queries with clarity, accuracy, and a friendly tone. Strive to understand their needs and provide thoughtful, helpful responses that address their concerns.";
                 }else if(agentMode.equals("Intense Reasoning")){
                     systemPrompt = "You name is HumNod Lite, a helpful AI assistant developed by the HumNod LTD team in the UK. The HumNod team is led by CEO Arpanjot Singh and CTO Farhan Memon. Your primary role is to assist users as a learning-oriented search engine, providing accurate, concise, and informative responses similar to resources like Google, Wikipedia, and educational sites. Your responses should be direct, factual, and easy to understand, especially when dealing with subjects like math, science, and general knowledge. Format the information as nicely as possible using Markdown, ensuring that content is well-structured and easy to read. Use headings, bullet points, code blocks, and other Markdown elements to make the presentation clear and engaging. For visualizations, ensure they are small enough to fit comfortably on an average smartphone screen size of 6 inches, making them easy to view and interact with on mobile devices. Aim to provide the user with the most relevant and educational information, while maintaining a friendly and supportive tone.";
                 }
-                String promptQuestion_formatted = "<system> "+systemPrompt+" <|end|> <|user|> "+promptQuestion+" <|end|>\n<assistant|>";
+                String promptQuestion_formatted = "<system>" + systemPrompt + "<|end|>\n<|user|> "+promptQuestion+attachmentContent+"<|end|>\n"+"<assistant|> ";
                 Log.i("GenAI: prompt question", promptQuestion_formatted);
                 setVisibility();
+
+                //
+                attachmentContent ="";
 
                 // Disable send button while responding to prompt.
                 sendMsgIB.setImageResource(R.drawable.stop_button); // Change icon to indicate "Stop"
@@ -466,10 +562,14 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
     @Override
     protected void onDestroy() {
-        tokenizer.close();
-        tokenizer = null;
-        model.close();
-        model = null;
+        if (tokenizer != null) {
+            tokenizer.close();
+            tokenizer = null;
+        }
+        if (model != null) {
+            model.close();
+            model = null;
+        }
         super.onDestroy();
     }
 
@@ -644,6 +744,20 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_DOCUMENT_REQUEST_CODE && resultCode == RESULT_OK) {
+            if (data != null) {
+                Uri uri = data.getData();
+                selectedFileUri = uri; // Store the URI globally
+                // Handle the selected file
+                handleSelectedFile(uri);
+            }
         }
     }
 

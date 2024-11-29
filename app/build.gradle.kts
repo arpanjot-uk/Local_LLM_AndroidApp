@@ -59,4 +59,6 @@ dependencies {
 
     implementation ("com.google.android.gms:play-services-ads:21.0.0")
 
+    implementation("com.google.mlkit:text-recognition:16.0.1")
+
 }
