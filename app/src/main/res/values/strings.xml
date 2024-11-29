@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">HumNod</string>
     <string-array name="response_modes">
-        <item>Fast Reasoning</item>
-        <item>Intense Reasoning</item>
+        <item>Assistant</item>
+        <item>Academic</item>
     </string-array>
 
     <string name="ad_unit_id">ca-app-pub-9551913901798827/3038322419</string>

@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private static final String TAG = "genai.app.MainActivity";
     private int maxLength = 2000;
     private float lengthPenalty = 1.0f;
-    private String agentMode = "Fast Reasoning";
+    private String agentMode = "Assistant";
 
     private boolean isCharLimitOn;
 
@@ -113,6 +113,9 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private void handleSelectedFile(Uri uri) {
         String mimeType = getContentResolver().getType(uri);
         if (mimeType != null) {
+            // Changing button icon to attached
+            attachFileIB.setImageResource(R.drawable.attached);
+
             if (mimeType.startsWith("image/")) {
                 // Handle image file
                 attachmentContent = "\nThe user has uploaded an image. Use the information extracted through OCR and image classification tools to interpret and respond as if observing the image directly. Craft responses that are natural, contextually relevant, and descriptive, as though you are 'seeing' the image through the provided data.\n";
@@ -258,6 +261,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
         sendMsgIB = findViewById(R.id.idIBSend);
         attachFileIB = findViewById(R.id.idIBAttach);
+        attachFileIB.setEnabled(false);
         userMsgEdt = findViewById(R.id.idEdtMessage);
         generatedTV = findViewById(R.id.sample_text);
         promptTV = findViewById(R.id.user_text);
@@ -386,6 +390,12 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
         // Set up attach button
         attachFileIB.setOnClickListener(v -> {
+            // Check if the app has right agent mode
+            if(agentMode.equals("Academic")){
+                Toast.makeText(this, "File attachment only available with Assistant mode", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // Check if the app has all the necessary permissions
             if (hasAllPermissions) {
                 attachmentContent = "";
                 openDocumentPicker();
@@ -441,17 +451,14 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 String promptQuestion = userMsgEdt.getText().toString();
 
                 String systemPrompt = "";
-                if(agentMode.equals("Fast Reasoning")){
+                if(agentMode.equals("Assistant")){
                  systemPrompt = "You are HumNod Lite, an AI assistant created by the UK-based company HumNod LTD, led by CEO Arpanjot Singh and CTO Farhan Memon. Your main goal is to assist users by answering their queries with clarity, accuracy, and a friendly tone. Strive to understand their needs and provide thoughtful, helpful responses that address their concerns.";
-                }else if(agentMode.equals("Intense Reasoning")){
+                }else if(agentMode.equals("Academic")){
                     systemPrompt = "You name is HumNod Lite, a helpful AI assistant developed by the HumNod LTD team in the UK. The HumNod team is led by CEO Arpanjot Singh and CTO Farhan Memon. Your primary role is to assist users as a learning-oriented search engine, providing accurate, concise, and informative responses similar to resources like Google, Wikipedia, and educational sites. Your responses should be direct, factual, and easy to understand, especially when dealing with subjects like math, science, and general knowledge. Format the information as nicely as possible using Markdown, ensuring that content is well-structured and easy to read. Use headings, bullet points, code blocks, and other Markdown elements to make the presentation clear and engaging. For visualizations, ensure they are small enough to fit comfortably on an average smartphone screen size of 6 inches, making them easy to view and interact with on mobile devices. Aim to provide the user with the most relevant and educational information, while maintaining a friendly and supportive tone.";
                 }
                 String promptQuestion_formatted = "<system>" + systemPrompt + "<|end|>\n<|user|> "+promptQuestion+attachmentContent+"<|end|>\n"+"<assistant|> ";
                 Log.i("GenAI: prompt question", promptQuestion_formatted);
                 setVisibility();
-
-                //
-                attachmentContent ="";
 
                 // Disable send button while responding to prompt.
                 sendMsgIB.setImageResource(R.drawable.stop_button); // Change icon to indicate "Stop"
@@ -467,6 +474,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 // Clear Edit Text or prompt question.
                 userMsgEdt.setText("");
                 generatedTV.setText("");
+                attachmentContent ="";
 
                 new Thread(new Runnable() {
                     @Override
@@ -549,6 +557,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
                             attachFileIB.setEnabled(false); // Disable input field to prevent editing
                             attachFileIB.setAlpha(0.5f);  // Make it visually lighter to show it is disabled
+                            attachFileIB.setImageResource(R.drawable.attach); // Change icon back to "attach"
 
                             // Enable EditText and restore appearance
                             userMsgEdt.setEnabled(true);
