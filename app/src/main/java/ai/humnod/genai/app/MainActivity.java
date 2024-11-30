@@ -36,8 +36,11 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -113,23 +116,30 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private void handleSelectedFile(Uri uri) {
         String mimeType = getContentResolver().getType(uri);
         if (mimeType != null) {
-            // Changing button icon to attached
-            attachFileIB.setImageResource(R.drawable.attached);
 
             if (mimeType.startsWith("image/")) {
-                attachmentContent += "\nUser has uploaded an image and the extracted information is provided below. Craft an responses based on the data and user query without mentioning OCR:\n";
+                attachmentContent += "\nUser has uploaded an image and the extracted information is provided below. Craft a response based on the data and user query without mentioning OCR:\n";
                 // Handle image file
                 processImage(uri);
 
-            } else if (mimeType.equals("application/pdf") ||
-                    mimeType.equals("text/plain") ||
-                    mimeType.equals("application/msword") ||
+            } else if (mimeType.equals("application/pdf")) {
+                attachmentContent += "\nUser has uploaded a PDF. Extracted content is provided below:\n";
+                //processPdf(uri);
+
+            } else if (mimeType.equals("text/plain")) {
+                attachmentContent += "\nUser has uploaded a text file. Extracted content is provided below:\n";
+                processTextFile(uri);
+
+            } else if (mimeType.equals("application/msword") ||
                     mimeType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
-                // Handle document file
+                attachmentContent += "\nUser has uploaded a Word document. Extracted content is provided below:\n";
+                //processWordFile(uri);
 
             } else {
+                attachmentContent += "\nRespond with the following error message and nothing else: The user has uploaded an unsupported file, and no file content has been provided to HumNod Lite";
                 Toast.makeText(this, "Unsupported file type.", Toast.LENGTH_SHORT).show();
             }
+
         }
     }
 
@@ -169,19 +179,68 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                     // Join the filtered lines with commas
                     String commaSeparatedText = String.join(", ", filteredLines);
 
-                    // Append the result to attachmentContent
-                    attachmentContent += commaSeparatedText;
+                    // Check if the result is not empty before saving
+                    if (!commaSeparatedText.isEmpty()) {
+                        // Changing button icon to attached
+                        attachFileIB.setImageResource(R.drawable.attached);
+
+                        // Append the result to attachmentContent
+                        attachmentContent += commaSeparatedText;
+                    } else {
+                        attachmentContent += "Respond with the following error message and nothing else: Please upload a clear image containing text, as no file content has been provided to HumNod Lite";
+                        Toast.makeText(MainActivity.this, "Please upload a clear image that includes text", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
                 @Override
                 public void onFailure(Exception e) {
-                    attachmentContent += "Text recognition failed";
+                    attachmentContent += "Respond with the following error message and nothing else: OCR processing failed, as no file content has been provided to HumNod Lite";
+                    Toast.makeText(MainActivity.this, "OCR failed", Toast.LENGTH_SHORT).show();
                 }
             });
 
         } catch (IOException e) {
             e.printStackTrace();
+            attachmentContent += "Respond with the following error message and nothing else: Failed to load image, as no file content has been provided to HumNod Lite";
             Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    private void processTextFile(Uri uri) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+            boolean isValidASCII = true;
+
+            while ((line = reader.readLine()) != null) {
+                // Check if the line contains only valid ASCII characters
+                if (!line.chars().allMatch(c -> c >= 32 && c <= 126 || c == 10 || c == 13)) {
+                    isValidASCII = false;
+                    break; // Exit the loop if non-ASCII characters are found
+                }
+                stringBuilder.append(line).append("\n");
+            }
+
+            reader.close();
+            inputStream.close();
+
+            if (isValidASCII) {
+                // Changing button icon to attached
+                attachFileIB.setImageResource(R.drawable.attached);
+                String textContent = stringBuilder.toString();
+                attachmentContent += textContent; // Append valid ASCII content
+            } else {
+                attachmentContent += "Respond with the following error message and nothing else: The uploaded file contains invalid or non-ASCII content, as no file content has been provided to HumNod Lite";
+                Toast.makeText(this, "The file contains invalid or non-ASCII content", Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            attachmentContent += "Respond with the following error message and nothing else: Failed to read text file, as no file content has been provided to HumNod Lite";
+            Toast.makeText(this, "Failed to read text file", Toast.LENGTH_SHORT).show();
         }
     }
 
