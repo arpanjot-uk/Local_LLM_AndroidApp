@@ -64,12 +64,16 @@ import io.noties.markwon.core.MarkwonTheme;
 public class MainActivity extends AppCompatActivity implements Consumer<String> {
 
     private ActivityMainBinding binding;
-    private EditText userMsgEdt;
     private Model model;
     private Tokenizer tokenizer;
+    private boolean isGenerating;
+    private static final String TAG = "genai.app.MainActivity";
+
 
     private Markwon markwon;
 
+
+    private EditText userMsgEdt;
     private ImageButton sendMsgIB;
     private ImageButton attachFileIB;
     private TextView generatedTV;
@@ -81,20 +85,19 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private ScrollView chatScrollView;
     private ImageButton scrollToBottomButton;
 
-    private boolean isGenerating;
 
-    private static final String TAG = "genai.app.MainActivity";
     private int maxLength = 2000;
     private float lengthPenalty = 1.0f;
     private String agentMode = "Assistant";
 
+
     private boolean isCharLimitOn;
 
-    private static final int PERMISSION_REQUEST_CODE = 100;
 
+    private static final int PERMISSION_REQUEST_CODE = 100;
     private boolean hasAllPermissions = false;
 
-    //
+
     private String attachmentContent;
     private static final String[] SUPPORTED_MIME_TYPES = {
             "application/pdf",
@@ -104,15 +107,18 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             "image/*"
     };
     private static final int PICK_DOCUMENT_REQUEST_CODE = 102;
-    // Global variable to store the selected file's URI
-    private Uri selectedFileUri;
     private OCRHelper ocrHelper;
 
-    private static boolean fileExists(Context context, String fileName) {
-        File file = new File(context.getFilesDir(), fileName);
-        return file.exists();
-    }
 
+
+
+
+
+
+    /***
+     *  Handling the users selected file
+     * @param uri
+     */
     private void handleSelectedFile(Uri uri) {
         String mimeType = getContentResolver().getType(uri);
         if (mimeType != null) {
@@ -123,16 +129,16 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 processImage(uri);
 
             } else if (mimeType.equals("application/pdf")) {
-                attachmentContent += "\nUser has uploaded a PDF. Extracted content is provided below:\n";
+                attachmentContent += "\nUser has uploaded a PDF. Extracted content is provided below. Craft a response based on the data and user query:\n";
                 //processPdf(uri);
 
             } else if (mimeType.equals("text/plain")) {
-                attachmentContent += "\nUser has uploaded a text file. Extracted content is provided below:\n";
+                attachmentContent += "\nUser has uploaded a text file. Extracted content is provided below. Craft a response based on the data and user query:\n";
                 processTextFile(uri);
 
             } else if (mimeType.equals("application/msword") ||
                     mimeType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
-                attachmentContent += "\nUser has uploaded a Word document. Extracted content is provided below:\n";
+                attachmentContent += "\nUser has uploaded a Word document. Extracted content is provided below. Craft a response based on the data and user query:\n";
                 //processWordFile(uri);
 
             } else {
@@ -209,32 +215,36 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
     private void processTextFile(Uri uri) {
         try {
+            // Open the file stream
             InputStream inputStream = getContentResolver().openInputStream(uri);
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder stringBuilder = new StringBuilder();
             String line;
-            boolean isValidASCII = true;
 
+            // Read the file content into a StringBuilder
             while ((line = reader.readLine()) != null) {
-                // Check if the line contains only valid ASCII characters
-                if (!line.chars().allMatch(c -> c >= 32 && c <= 126 || c == 10 || c == 13)) {
-                    isValidASCII = false;
-                    break; // Exit the loop if non-ASCII characters are found
-                }
                 stringBuilder.append(line).append("\n");
             }
 
             reader.close();
             inputStream.close();
 
-            if (isValidASCII) {
-                // Changing button icon to attached
-                attachFileIB.setImageResource(R.drawable.attached);
-                String textContent = stringBuilder.toString();
-                attachmentContent += textContent; // Append valid ASCII content
-            } else {
+            // File content as a single string
+            String fileContent = stringBuilder.toString();
+
+            // Process and summarize the content using DocumentProcessor
+            String summaryDocument = DocumentProcessor.processAndSummarizeContent(fileContent, 50);
+
+            // Handle the result
+            if (summaryDocument.equals("Not ASCII")) {
                 attachmentContent += "Respond with the following error message and nothing else: The uploaded file contains invalid or non-ASCII content, as no file content has been provided to HumNod Lite";
                 Toast.makeText(this, "The file contains invalid or non-ASCII content", Toast.LENGTH_SHORT).show();
+            } else if (summaryDocument.equals("Limit Hit")) {
+                attachmentContent += "Respond with the following error message and nothing else: The file is too large. Max word length is 500, as no file content has been provided to HumNod Lite";
+                Toast.makeText(this, "The file is too large. Max word length is 500", Toast.LENGTH_SHORT).show();
+            } else {
+                attachFileIB.setImageResource(R.drawable.attached);
+                attachmentContent += summaryDocument;
             }
 
         } catch (IOException e) {
@@ -244,6 +254,24 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         }
     }
 
+
+
+    private static boolean fileExists(Context context, String fileName) {
+        File file = new File(context.getFilesDir(), fileName);
+        return file.exists();
+    }
+
+
+
+
+
+
+
+    /***
+     * Used for auto scaling the text size based on the device screen size for the code box
+     * @param sp
+     * @return
+     */
     private int getScaledTextSize(float sp) {
         return Math.round(sp * getResources().getDisplayMetrics().scaledDensity);
     }
@@ -260,7 +288,15 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         return totalRamInBytes >= minRamInBytes;
     }
 
-    // Method to show a warning dialog and exit the app
+
+
+
+
+
+
+    /***
+     *  Show a warning dialog and exit the app
+     */
     private void showRamWarningAndExit() {
         // Inflate the custom layout
         View dialogView = getLayoutInflater().inflate(R.layout.warning_dialog_layout, null);
@@ -281,7 +317,15 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         alertDialog.show();
     }
 
-    // Function to check and request permissions
+
+
+
+
+
+
+    /***
+     *  Check if the app has all the necessary permissions
+     */
     private void checkAndRequestPermissions() {
         List<String> permissionsNeeded = new ArrayList<>();
 
@@ -316,6 +360,14 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             // Proceed with your app logic that requires permissions
         }
     }
+
+
+
+
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -522,7 +574,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 generatedTV.setText("");
 
 
-                String promptQuestion = userMsgEdt.getText().toString();
+                String promptQuestion = "User Message is provided bellow: \n" + userMsgEdt.getText().toString();
 
                 String systemPrompt = "";
                 if(agentMode.equals("Assistant")){
@@ -837,7 +889,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         if (requestCode == PICK_DOCUMENT_REQUEST_CODE && resultCode == RESULT_OK) {
             if (data != null) {
                 Uri uri = data.getData();
-                selectedFileUri = uri; // Store the URI globally
                 // Handle the selected file
                 handleSelectedFile(uri);
             }
