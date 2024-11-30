@@ -81,8 +81,8 @@ public class DocumentProcessor {
         int summarizedWordCount = countWords(finalOutput.toString());
         Log.d(TAG, "Summarized Word Count: " + summarizedWordCount);
 
-        if (summarizedWordCount > 250) {
-            Log.d(TAG, "Summarized content exceeds the 250-word limit.");
+        if (summarizedWordCount > 300) {
+            Log.d(TAG, "Summarized content exceeds the 300-word limit.");
             return "Limit Hit";
         }
 

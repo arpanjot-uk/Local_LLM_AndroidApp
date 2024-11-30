@@ -196,12 +196,18 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                         attachmentContent += "Respond with the following error message and nothing else: Please upload a clear image containing text, as no file content has been provided to HumNod Lite";
                         Toast.makeText(MainActivity.this, "Please upload a clear image that includes text", Toast.LENGTH_SHORT).show();
                     }
+
+                    // Recycle the bitmap after processing
+                    bitmap.recycle();
                 }
 
                 @Override
                 public void onFailure(Exception e) {
                     attachmentContent += "Respond with the following error message and nothing else: OCR processing failed, as no file content has been provided to HumNod Lite";
                     Toast.makeText(MainActivity.this, "OCR failed", Toast.LENGTH_SHORT).show();
+
+                    // Recycle the bitmap after processing
+                    bitmap.recycle();
                 }
             });
 
@@ -214,20 +220,15 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
 
     private void processTextFile(Uri uri) {
-        try {
-            // Open the file stream
-            InputStream inputStream = getContentResolver().openInputStream(uri);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        try (InputStream inputStream = getContentResolver().openInputStream(uri);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+
             StringBuilder stringBuilder = new StringBuilder();
             String line;
 
-            // Read the file content into a StringBuilder
             while ((line = reader.readLine()) != null) {
                 stringBuilder.append(line).append("\n");
             }
-
-            reader.close();
-            inputStream.close();
 
             // File content as a single string
             String fileContent = stringBuilder.toString();
@@ -240,8 +241,8 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 attachmentContent += "Respond with the following error message and nothing else: The uploaded file contains invalid or non-ASCII content, as no file content has been provided to HumNod Lite";
                 Toast.makeText(this, "The file contains invalid or non-ASCII content", Toast.LENGTH_SHORT).show();
             } else if (summaryDocument.equals("Limit Hit")) {
-                attachmentContent += "Respond with the following error message and nothing else: The file is too large. Max word length is 500, as no file content has been provided to HumNod Lite";
-                Toast.makeText(this, "The file is too large. Max word length is 500", Toast.LENGTH_SHORT).show();
+                attachmentContent += "Respond with the following error message and nothing else: The file is too large. Max word length is 600, as no file content has been provided to HumNod Lite";
+                Toast.makeText(this, "The file is too large. Max word length is 600", Toast.LENGTH_SHORT).show();
             } else {
                 attachFileIB.setImageResource(R.drawable.attached);
                 attachmentContent += summaryDocument;
@@ -574,7 +575,9 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 generatedTV.setText("");
 
 
-                String promptQuestion = "User Message is provided bellow: \n" + userMsgEdt.getText().toString();
+                String promptQuestionTag = "User Message is provided bellow: \n";
+
+                String promptQuestion = userMsgEdt.getText().toString();
 
                 String systemPrompt = "";
                 if(agentMode.equals("Assistant")){
@@ -582,7 +585,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 }else if(agentMode.equals("Academic")){
                     systemPrompt = "You are HumNod Lite, an AI assistant developed by UK-based HumNod LTD, led by CEO Arpanjot Singh and CTO Farhan Memon. Your primary role is to assist users as a learning-oriented search engine, providing accurate, concise, and informative responses similar to resources like Google, Wikipedia, and educational sites. Your responses should be direct, factual, and easy to understand, especially when dealing with subjects like math, science, and general knowledge. Format the information as nicely as possible using Markdown, ensuring that content is well-structured and easy to read. Use headings, bullet points, code blocks, and other Markdown elements to make the presentation clear and engaging. Aim to provide the user with the most relevant and educational information, while maintaining a friendly and supportive tone.";
                 }
-                String promptQuestion_formatted = "<|system|>" + systemPrompt + "<|end|>\n<|user|> "+promptQuestion+attachmentContent+"<|end|>\n"+"<|assistant|> ";
+                String promptQuestion_formatted = "<|system|>" + systemPrompt + "<|end|>\n<|user|> "+promptQuestionTag+promptQuestion+attachmentContent+"<|end|>\n"+"<|assistant|> ";
                 Log.i("GenAI: prompt question", promptQuestion_formatted);
                 setVisibility();
 
@@ -623,54 +626,92 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
                             generator = new Generator(model, generatorParams);
 
-                            // try to measure average time taken to generate each token.
+                            // Initialize variables for timing
+                            long[] tokenTimes = new long[5];
+                            int tokenTimeIndex = 0;
+                            boolean hasFiveTokenTimes = false;
                             long startTime = System.currentTimeMillis();
                             long firstTokenTime = startTime;
                             long currentTime = startTime;
                             int numTokens = 0;
+
                             while (!generator.isDone() && isGenerating) {
+                                long tokenStartTime = System.currentTimeMillis();
+
                                 generator.computeLogits();
                                 generator.generateNextToken();
-                 
+
                                 int token = generator.getLastTokenInSequence(0);
 
-                                if (numTokens == 0) { //first token
-                                    firstTokenTime = System.currentTimeMillis();
+                                String tokenString = stream.decode(token);
+                                tokenListener.accept(tokenString);
+
+                                long tokenEndTime = System.currentTimeMillis();
+                                long tokenTime = tokenEndTime - tokenStartTime;
+
+                                numTokens++;
+
+                                if (numTokens == 1) {
+                                    // Ignore the first token's time
+                                    firstTokenTime = tokenEndTime;
+                                } else {
+                                    // Store the token time, excluding the first token
+                                    tokenTimes[tokenTimeIndex] = tokenTime;
+                                    tokenTimeIndex++;
+
+                                    if (tokenTimeIndex >= 5) {
+                                        tokenTimeIndex = 0;
+                                        hasFiveTokenTimes = true;
+                                    }
+
+                                    if (hasFiveTokenTimes) {
+                                        // Compute the average time over the last 5 tokens
+                                        long totalTokenTime = 0;
+                                        for (int i = 0; i < 5; i++) {
+                                            totalTokenTime += tokenTimes[i];
+                                        }
+                                        double averageTokenTime = totalTokenTime / 5.0;
+
+                                        Log.i(TAG, "Average time over last 5 tokens (excluding first token): " + (averageTokenTime / 1000.0) + " seconds");
+
+                                        if (averageTokenTime > 1000) { // 1000 milliseconds = 1 seconds
+                                            runOnUiThread(() -> {
+                                                Toast.makeText(MainActivity.this, "Processing is taking too long due to large input. Please provide a smaller input.", Toast.LENGTH_LONG).show();
+                                            });
+                                            isGenerating = false;
+                                            break;
+                                        }
+                                    }
                                 }
 
-                                tokenListener.accept(stream.decode(token));
+                                Log.i(TAG, "Generated token: " + token + ": " + tokenString);
+                                Log.i(TAG, "Time taken to generate token: " + (tokenTime / 1000.0) + " seconds");
 
-
-                                Log.i(TAG, "Generated token: " + token + ": " +  stream.decode(token));
-                                Log.i(TAG, "Time taken to generate token: " + (System.currentTimeMillis() - currentTime)/ 1000.0 + " seconds");
-                                currentTime = System.currentTimeMillis();
-                                numTokens++;
+                                currentTime = tokenEndTime;
                             }
-                            long totalTime = System.currentTimeMillis() - firstTokenTime;
 
-                            float promptProcessingTime = (firstTokenTime - startTime)/ 1000.0f;
-                            float tokensPerSecond = (1000 * (numTokens -1)) / totalTime;
-
-                        //THIS WAS REMOVED AS WAS USED TO READABLE THE BUTTON AFTER GENERATION
-                           // runOnUiThread(() -> {
-                                //sendMsgIB.setEnabled(true);
-                                //sendMsgIB.setAlpha(1.0f);
-
-                                // Display the token generation rate in a dialog popup
-                                //showTokenPopup(promptProcessingTime, tokensPerSecond);
-                           // });
-
-                            Log.i(TAG, "Prompt processing time (first token): " + promptProcessingTime + " seconds");
-                            Log.i(TAG, "Tokens generated per second (excluding prompt processing): " + tokensPerSecond);
                         }
                         catch (GenAIException e) {
                             Log.e(TAG, "Exception occurred during model query: " + e.getMessage());
                         }
                         finally {
-                            if (generator != null) generator.close();
-                            if (encodedPrompt != null) encodedPrompt.close();
-                            if (stream != null) stream.close();
-                            if (generatorParams != null) generatorParams.close();
+                            // Clean up resources
+                            if (generator != null) {
+                                generator.close();
+                                generator = null;
+                            }
+                            if (encodedPrompt != null) {
+                                encodedPrompt.close();
+                                encodedPrompt = null;
+                            }
+                            if (stream != null) {
+                                stream.close();
+                                stream = null;
+                            }
+                            if (generatorParams != null) {
+                                generatorParams.close();
+                                generatorParams = null;
+                            }
                         }
 
                         runOnUiThread(() -> {
