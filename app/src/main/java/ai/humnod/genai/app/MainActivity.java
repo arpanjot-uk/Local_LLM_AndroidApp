@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                         attachFileIB.setImageResource(R.drawable.attached);
 
                         // Append the result to attachmentContent
-                        attachmentContent += commaSeparatedText;
+                        attachmentContent += DocumentProcessor.processAndSummarizeContent(commaSeparatedText, 50);
                     } else {
                         attachmentContent += "Respond with the following error message and nothing else: Please upload a clear image containing text, as no file content has been provided to HumNod Lite";
                         Toast.makeText(MainActivity.this, "Please upload a clear image that includes text", Toast.LENGTH_SHORT).show();
@@ -533,10 +533,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         });
 
 
-
-
-
-
         Consumer<String> tokenListener = this;
 
         //enable scrolling and resizing of text boxes
@@ -736,6 +732,13 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         });
     }
 
+
+
+
+
+
+
+
     @Override
     protected void onDestroy() {
         if (tokenizer != null) {
@@ -748,6 +751,13 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         }
         super.onDestroy();
     }
+
+
+
+
+
+
+
 
     private void downloadModels(Context context) throws GenAIException {
 
@@ -834,9 +844,10 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
 
 
+
+
     // Member variable to accumulate the text as it's generated.
     private final StringBuilder accumulatedText = new StringBuilder();
-
 
     @Override
     public void accept(String token) {
@@ -876,6 +887,10 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     }
 
 
+
+
+
+
     public void setVisibility() {
         TextView view = (TextView) findViewById(R.id.user_text);
         view.setVisibility(View.VISIBLE);
@@ -883,22 +898,9 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         botView.setVisibility(View.VISIBLE);
     }
 
-    private void showTokenPopup(float promptProcessingTime, float tokenRate) {
 
-        final Dialog dialog = new Dialog(MainActivity.this);
-        dialog.setContentView(R.layout.info_popup);
 
-        TextView promptProcessingTimeTv = dialog.findViewById(R.id.prompt_processing_time_tv);
-        TextView tokensPerSecondTv = dialog.findViewById(R.id.tokens_per_second_tv);
-        Button closeBtn = dialog.findViewById(R.id.close_btn);
 
-        promptProcessingTimeTv.setText(String.format("Prompt processing time: %.2f seconds", promptProcessingTime));
-        tokensPerSecondTv.setText(String.format("Tokens per second: %.2f", tokenRate));
-
-        closeBtn.setOnClickListener(v -> dialog.dismiss());
-
-        dialog.show();
-    }
 
 
     // Handle the user's response to the permission request
@@ -922,6 +924,11 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
+
+
+
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
