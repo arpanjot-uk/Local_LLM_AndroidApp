@@ -23,8 +23,6 @@ public class DocumentProcessor {
         // Use cleaned ASCII content
         content = validationResult.cleanedContent;
 
-        StringBuilder finalOutput = new StringBuilder();
-
         // Normalize input
         content = content.replaceAll("\\s+", " ").trim(); // Normalize spaces
         content = content.replaceAll("\\. ", ".\n");     // Add line breaks after periods
@@ -35,11 +33,19 @@ public class DocumentProcessor {
         int wordCount = countWords(content);
         Log.d(TAG, "Total word count: " + wordCount);
 
+        // Check minimum word count
+        if (wordCount < 10) {
+            Log.d(TAG, "Word count less than 10, insufficient for analysis.");
+            return "Not sufficient content for analysis";
+        }
+
         // Skip processing if fewer than 100 words
         if (wordCount < 50) {
             Log.d(TAG, "Word count less than 50, returning content as-is.");
             return content; // Return the content as-is
         }
+
+        StringBuilder finalOutput = new StringBuilder();
 
         // Process content in chunks
         BufferedReader chunkReader = new BufferedReader(new StringReader(content));
@@ -103,9 +109,34 @@ public class DocumentProcessor {
         StringBuilder cleanedContent = new StringBuilder();
         int nonASCIICount = 0;
 
+        // Define allowed special characters (e.g., bullet points, dashes)
+        Set<Character> allowedSpecialCharacters = new HashSet<>(Arrays.asList(
+                // Bullet points and dashes
+                '•', '-', '–', '—', '·','~',
+
+                // Quotes and apostrophes
+                '“', '”', '‘', '’', '"', '\'',
+
+                // Ellipsis
+                '…',
+
+                // Parentheses and brackets
+                '(', ')', '[', ']', '{', '}',
+
+                // Mathematical symbols
+                '+', '=', '<', '>', '±', '×', '÷', '∑', '∏', '∞', '√', '∫', '≈', '≠', '%',
+
+                // Currency symbols
+                '$', '€', '£', '¥', '₹', '¢', '₩', '₪',
+
+                // Common punctuation
+                '.', ',', ';', ':', '!', '?', '@', '#', '^', '&', '*', '_', '|', '\\', '/'
+        ));
+
+
         for (char c : content.toCharArray()) {
-            if ((c >= 32 && c <= 126) || c == 10 || c == 13 || c == 9) {
-                cleanedContent.append(c); // Keep valid ASCII characters
+            if ((c >= 32 && c <= 126) || c == 10 || c == 13 || c == 9 || allowedSpecialCharacters.contains(c)) {
+                cleanedContent.append(c); // Keep valid ASCII or allowed special characters
             } else {
                 nonASCIICount++; // Count invalid ASCII characters
             }
@@ -118,6 +149,7 @@ public class DocumentProcessor {
 
         return new ASCIIValidationResult(cleanedContent.toString(), true);
     }
+
 
     private static int countWords(String text) {
         // Split the text into words and count
