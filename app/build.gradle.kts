@@ -61,4 +61,7 @@ dependencies {
 
     implementation("com.google.mlkit:text-recognition:16.0.1")
 
+    implementation ("com.itextpdf:itext7-core:7.2.3")
+
+
 }

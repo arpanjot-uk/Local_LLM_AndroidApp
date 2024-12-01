@@ -61,6 +61,10 @@ import io.noties.markwon.AbstractMarkwonPlugin;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.core.MarkwonTheme;
 
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
+
 public class MainActivity extends AppCompatActivity implements Consumer<String> {
 
     private ActivityMainBinding binding;
@@ -110,11 +114,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private OCRHelper ocrHelper;
 
 
-
-
-
-
-
     /***
      *  Handling the users selected file
      * @param uri
@@ -130,10 +129,12 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
             } else if (mimeType.equals("application/pdf")) {
                 attachmentContent += "\nUser has uploaded a PDF. Extracted content is provided below. Craft a response based on the data and user query:\n";
-                //processPdf(uri);
+                // Handle PDF file
+                processPdf(uri);
 
             } else if (mimeType.equals("text/plain")) {
                 attachmentContent += "\nUser has uploaded a text file. Extracted content is provided below. Craft a response based on the data and user query:\n";
+                // Handle TXT file
                 processTextFile(uri);
 
             } else if (mimeType.equals("application/msword") ||
@@ -185,13 +186,27 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                     // Join the filtered lines with commas
                     String commaSeparatedText = String.join(", ", filteredLines);
 
+
                     // Check if the result is not empty before saving
                     if (!commaSeparatedText.isEmpty()) {
-                        // Changing button icon to attached
-                        attachFileIB.setImageResource(R.drawable.attached);
+                        // Process and summarize the content using DocumentProcessor
+                        String summaryImage = DocumentProcessor.processAndSummarizeContent(commaSeparatedText, 50);
 
-                        // Append the result to attachmentContent
-                        attachmentContent += DocumentProcessor.processAndSummarizeContent(commaSeparatedText, 50);
+                        if (summaryImage.equals("Not ASCII")) {
+                            attachmentContent += "Respond with the following error message and nothing else: The uploaded Image contains invalid or non-ASCII content, as no file content has been provided to HumNod Lite";
+                            Toast.makeText(MainActivity.this, "The Image contains invalid or non-ASCII content", Toast.LENGTH_SHORT).show();
+                        } else if (summaryImage.equals("Limit Hit")) {
+                            attachmentContent += "Respond with the following error message and nothing else: The image information is too large, as no file content has been provided to HumNod Lite";
+                            Toast.makeText(MainActivity.this, "The image information is too large", Toast.LENGTH_SHORT).show();
+                        } else if (summaryImage.equals("Words > 5")) {
+                            attachmentContent += "Respond with the following error message and nothing else: Please upload a image with sufficient content to allow me to understand and process your query effectively, as no file content has been provided to HumNod Lite";
+                            Toast.makeText(MainActivity.this, "Please re-upload a file with content", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Changing button icon to attached
+                            attachFileIB.setImageResource(R.drawable.attached);
+                            // Append the result to attachmentContent
+                            attachmentContent += summaryImage;
+                        }
                     } else {
                         attachmentContent += "Respond with the following error message and nothing else: Please upload a clear image containing text, as no file content has been provided to HumNod Lite";
                         Toast.makeText(MainActivity.this, "Please upload a clear image that includes text", Toast.LENGTH_SHORT).show();
@@ -233,20 +248,30 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             // File content as a single string
             String fileContent = stringBuilder.toString();
 
-            // Process and summarize the content using DocumentProcessor
-            String summaryDocument = DocumentProcessor.processAndSummarizeContent(fileContent, 50);
+            if (!fileContent.isEmpty()) {
+                // Process and summarize the content using DocumentProcessor
+                String summaryDocument = DocumentProcessor.processAndSummarizeContent(fileContent, 50);
 
-            // Handle the result
-            if (summaryDocument.equals("Not ASCII")) {
-                attachmentContent += "Respond with the following error message and nothing else: The uploaded file contains invalid or non-ASCII content, as no file content has been provided to HumNod Lite";
-                Toast.makeText(this, "The file contains invalid or non-ASCII content", Toast.LENGTH_SHORT).show();
-            } else if (summaryDocument.equals("Limit Hit")) {
-                attachmentContent += "Respond with the following error message and nothing else: The file is too large. Max word length is 600, as no file content has been provided to HumNod Lite";
-                Toast.makeText(this, "The file is too large. Max word length is 600", Toast.LENGTH_SHORT).show();
+                // Handle the result
+                if (summaryDocument.equals("Not ASCII")) {
+                    attachmentContent += "Respond with the following error message and nothing else: The uploaded file contains invalid or non-ASCII content, as no file content has been provided to HumNod Lite";
+                    Toast.makeText(this, "The file contains invalid or non-ASCII content", Toast.LENGTH_SHORT).show();
+                } else if (summaryDocument.equals("Limit Hit")) {
+                    attachmentContent += "Respond with the following error message and nothing else: The file is too large. Max word length is 600, as no file content has been provided to HumNod Lite";
+                    Toast.makeText(this, "The file is too large. Max word length is 600", Toast.LENGTH_SHORT).show();
+                } else if (summaryDocument.equals("Words > 5")) {
+                    attachmentContent += "Respond with the following error message and nothing else: Please upload a file with sufficient content to allow me to understand and process your query effectively, as no file content has been provided to HumNod Lite";
+                    Toast.makeText(MainActivity.this, "Please re-upload a file with content", Toast.LENGTH_SHORT).show();
+                } else {
+                    attachFileIB.setImageResource(R.drawable.attached);
+                    attachmentContent += summaryDocument;
+                }
+
             } else {
-                attachFileIB.setImageResource(R.drawable.attached);
-                attachmentContent += summaryDocument;
+                attachmentContent += "Respond with the following error message and nothing else: Please upload a file with content, as no file content has been provided to HumNod Lite";
+                Toast.makeText(MainActivity.this, "Please re-upload a file with content", Toast.LENGTH_SHORT).show();
             }
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -255,17 +280,69 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         }
     }
 
+    private void processPdf(Uri uri) {
+        PdfDocument pdfDocument = null;
+        try (InputStream inputStream = getContentResolver().openInputStream(uri)) {
+            // Initialize the PdfReader with the InputStream
+            PdfReader reader = new PdfReader(inputStream);
+            pdfDocument = new PdfDocument(reader);
+
+            StringBuilder extractedText = new StringBuilder();
+
+            // Iterate through all pages and extract text
+            int totalPages = pdfDocument.getNumberOfPages();
+            for (int i = 1; i <= totalPages; i++) {
+                String pageText = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(i));
+                extractedText.append(pageText).append("\n");
+            }
+
+            // Extracted content as a String
+            String pdfContent = extractedText.toString();
+
+            if(!pdfContent.isEmpty()){
+                // Process and summarize the content using DocumentProcessor
+                String summaryDocument = DocumentProcessor.processAndSummarizeContent(pdfContent, 50);
+
+                // Handle the result
+                if (summaryDocument.equals("Not ASCII")) {
+                    attachmentContent += "Respond with the following error message and nothing else: The uploaded PDF contains invalid or non-ASCII content, as no file content has been provided to HumNod Lite";
+                    Toast.makeText(this, "The PDF contains invalid or non-ASCII content", Toast.LENGTH_SHORT).show();
+                } else if (summaryDocument.equals("Limit Hit")) {
+                    attachmentContent += "Respond with the following error message and nothing else: The PDF is too large. Max word length is 600, as no file content has been provided to HumNod Lite";
+                    Toast.makeText(this, "The PDF is too large. Max word length is 600", Toast.LENGTH_SHORT).show();
+                } else if (summaryDocument.equals("Words > 5")) {
+                    attachmentContent += "Respond with the following error message and nothing else: Please upload a PDF with sufficient content to allow me to understand and process your query effectively, as no file content has been provided to HumNod Lite";
+                    Toast.makeText(this, "Please re-upload a PDF with content", Toast.LENGTH_SHORT).show();
+                } else {
+                    attachFileIB.setImageResource(R.drawable.attached);
+                    attachmentContent += summaryDocument;
+                }
+            }else{
+                attachmentContent += "Respond with the following error message and nothing else: Please upload a PDF with content, as no file content has been provided to HumNod Lite";
+                Toast.makeText(MainActivity.this, "Please re-upload a PDF with content", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            attachmentContent += "Respond with the following error message and nothing else: Failed to read PDF, as no file content has been provided to HumNod Lite";
+            Toast.makeText(this, "Failed to read PDF", Toast.LENGTH_SHORT).show();
+        } finally {
+            // Ensure the PdfDocument is closed in case of an exception
+            if (pdfDocument != null) {
+                try {
+                    pdfDocument.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // Log or handle close failure if needed
+                }
+            }
+        }
+    }
 
 
     private static boolean fileExists(Context context, String fileName) {
         File file = new File(context.getFilesDir(), fileName);
         return file.exists();
     }
-
-
-
-
-
 
 
     /***
@@ -290,11 +367,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     }
 
 
-
-
-
-
-
     /***
      *  Show a warning dialog and exit the app
      */
@@ -317,11 +389,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         alertDialog.setCancelable(false); // Prevent closing the dialog without action
         alertDialog.show();
     }
-
-
-
-
-
 
 
     /***
@@ -361,13 +428,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             // Proceed with your app logic that requires permissions
         }
     }
-
-
-
-
-
-
-
 
 
     @Override
@@ -500,7 +560,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                         sendMsgIB.setEnabled(true);
                         sendMsgIB.setAlpha(1.0f);
 
-                        if(hasAllPermissions){
+                        if (hasAllPermissions) {
                             attachFileIB.setEnabled(true); // Disable input field to prevent editing
                             attachFileIB.setAlpha(1.0f);  // Make it visually lighter to show it is disabled
                         }
@@ -518,7 +578,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         // Set up attach button
         attachFileIB.setOnClickListener(v -> {
             // Check if the app has right agent mode
-            if(agentMode.equals("Academic")){
+            if (agentMode.equals("Academic")) {
                 Toast.makeText(this, "File attachment only available with Assistant mode", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -576,12 +636,12 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 String promptQuestion = userMsgEdt.getText().toString();
 
                 String systemPrompt = "";
-                if(agentMode.equals("Assistant")){
+                if (agentMode.equals("Assistant")) {
                     systemPrompt = "You are HumNod Lite, an AI assistant developed by UK-based HumNod LTD, led by CEO Arpanjot Singh and CTO Farhan Memon. Your primary objective is to assist users by addressing their queries with clarity, precision, and a friendly tone. Focus exclusively on the user's query, avoiding unnecessary details. Ensure responses are well-organized, divided into clear paragraphs to enhance readability.";
-                }else if(agentMode.equals("Academic")){
+                } else if (agentMode.equals("Academic")) {
                     systemPrompt = "You are HumNod Lite, an AI assistant developed by UK-based HumNod LTD, led by CEO Arpanjot Singh and CTO Farhan Memon. Your primary role is to assist users as a learning-oriented search engine, providing accurate, concise, and informative responses similar to resources like Google, Wikipedia, and educational sites. Your responses should be direct, factual, and easy to understand, especially when dealing with subjects like math, science, and general knowledge. Format the information as nicely as possible using Markdown, ensuring that content is well-structured and easy to read. Use headings, bullet points, code blocks, and other Markdown elements to make the presentation clear and engaging. Aim to provide the user with the most relevant and educational information, while maintaining a friendly and supportive tone.";
                 }
-                String promptQuestion_formatted = "<|system|>" + systemPrompt + "<|end|>\n<|user|> "+promptQuestionTag+promptQuestion+attachmentContent+"<|end|>\n"+"<|assistant|> ";
+                String promptQuestion_formatted = "<|system|>" + systemPrompt + "<|end|>\n<|user|> " + promptQuestionTag + promptQuestion + attachmentContent + "<|end|>\n" + "<|assistant|> ";
                 Log.i("GenAI: prompt question", promptQuestion_formatted);
                 setVisibility();
 
@@ -599,7 +659,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 // Clear Edit Text or prompt question.
                 userMsgEdt.setText("");
                 generatedTV.setText("");
-                attachmentContent ="";
+                attachmentContent = "";
 
                 new Thread(new Runnable() {
                     @Override
@@ -686,11 +746,9 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                                 currentTime = tokenEndTime;
                             }
 
-                        }
-                        catch (GenAIException e) {
+                        } catch (GenAIException e) {
                             Log.e(TAG, "Exception occurred during model query: " + e.getMessage());
-                        }
-                        finally {
+                        } finally {
                             // Clean up resources
                             if (generator != null) {
                                 generator.close();
@@ -733,12 +791,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     }
 
 
-
-
-
-
-
-
     @Override
     protected void onDestroy() {
         if (tokenizer != null) {
@@ -751,12 +803,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         }
         super.onDestroy();
     }
-
-
-
-
-
-
 
 
     private void downloadModels(Context context) throws GenAIException {
@@ -817,6 +863,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                         });
                     }
                 }
+
                 @Override
                 public void onDownloadComplete() {
                     Log.d(TAG, "HumNod Lite download completed");
@@ -840,10 +887,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         });
         executor.shutdown();
     }
-
-
-
-
 
 
     // Member variable to accumulate the text as it's generated.
@@ -887,20 +930,12 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     }
 
 
-
-
-
-
     public void setVisibility() {
         TextView view = (TextView) findViewById(R.id.user_text);
         view.setVisibility(View.VISIBLE);
         TextView botView = (TextView) findViewById(R.id.sample_text);
         botView.setVisibility(View.VISIBLE);
     }
-
-
-
-
 
 
     // Handle the user's response to the permission request
@@ -924,10 +959,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
-
-
-
-
 
 
     @Override
