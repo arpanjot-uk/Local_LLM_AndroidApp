@@ -34,9 +34,9 @@ public class DocumentProcessor {
         Log.d(TAG, "Total word count: " + wordCount);
 
         // Check minimum word count
-        if (wordCount < 10) {
-            Log.d(TAG, "Word count less than 10, insufficient for analysis.");
-            return "Not sufficient content for analysis";
+        if (wordCount < 5) {
+            Log.d(TAG, "Word count less than 5, insufficient for analysis.");
+            return "Words > 5";
         }
 
         // Skip processing if fewer than 100 words
