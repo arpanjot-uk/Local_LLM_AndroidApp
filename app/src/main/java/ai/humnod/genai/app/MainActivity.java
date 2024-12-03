@@ -807,6 +807,10 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
     private void downloadModels(Context context) throws GenAIException {
 
+        // If the download stops working use the HM repository which works. The link formatting requires
+        // "repository name"/resolve/main in the url the resolve key word is non included.
+
+        //https://huggingface.co/Arpan2022/HN_Mobile/resolve/main/
         final String baseUrl = "https://huggingface.co/microsoft/Phi-3-mini-4k-instruct-onnx/resolve/main/cpu_and_mobile/cpu-int4-rtn-block-32-acc-level-4/";
         List<String> files = Arrays.asList(
                 "added_tokens.json",
