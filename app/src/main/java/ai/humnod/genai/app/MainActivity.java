@@ -139,6 +139,8 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             } else {
                 attachmentContent += "\nRespond with the following error message and nothing else: The user has uploaded an unsupported file, and no file content has been provided to HumNod Lite";
                 Toast.makeText(this, "Unsupported file type.", Toast.LENGTH_SHORT).show();
+                // Changing button icon to attached
+                attachFileIB.setImageResource(R.drawable.attached_error);
             }
 
         }
@@ -189,21 +191,30 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                         if (summaryImage.equals("Not ASCII")) {
                             attachmentContent += "Respond with the following error message and nothing else: The uploaded Image contains invalid or non-ASCII content, as no file content has been provided to HumNod Lite";
                             Toast.makeText(MainActivity.this, "The Image contains invalid or non-ASCII content", Toast.LENGTH_SHORT).show();
+
+                            attachFileIB.setImageResource(R.drawable.attach);
                         } else if (summaryImage.equals("Limit Hit")) {
                             attachmentContent += "Respond with the following error message and nothing else: The image information is too large, as no file content has been provided to HumNod Lite";
                             Toast.makeText(MainActivity.this, "The image information is too large", Toast.LENGTH_SHORT).show();
+
+                            attachFileIB.setImageResource(R.drawable.attach);
                         } else if (summaryImage.equals("Words > 5")) {
                             attachmentContent += "Respond with the following error message and nothing else: Please upload a image with sufficient content to allow me to understand and process your query effectively, as no file content has been provided to HumNod Lite";
                             Toast.makeText(MainActivity.this, "Please re-upload a file with content", Toast.LENGTH_SHORT).show();
+
+                            attachFileIB.setImageResource(R.drawable.attach);
                         } else {
-                            // Changing button icon to attached
-                            attachFileIB.setImageResource(R.drawable.attached);
                             // Append the result to attachmentContent
                             attachmentContent += summaryImage;
+
+                            // Changing button icon to attached
+                            attachFileIB.setImageResource(R.drawable.attached1);
                         }
                     } else {
                         attachmentContent += "Respond with the following error message and nothing else: Please upload a clear image containing text, as no file content has been provided to HumNod Lite";
                         Toast.makeText(MainActivity.this, "Please upload a clear image that includes text", Toast.LENGTH_SHORT).show();
+
+                        attachFileIB.setImageResource(R.drawable.attach);
                     }
 
                     // Recycle the bitmap after processing
@@ -215,6 +226,8 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                     attachmentContent += "Respond with the following error message and nothing else: OCR processing failed, as no file content has been provided to HumNod Lite";
                     Toast.makeText(MainActivity.this, "OCR failed", Toast.LENGTH_SHORT).show();
 
+                    attachFileIB.setImageResource(R.drawable.attach);
+
                     // Recycle the bitmap after processing
                     bitmap.recycle();
                 }
@@ -224,6 +237,8 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             e.printStackTrace();
             attachmentContent += "Respond with the following error message and nothing else: Failed to load image, as no file content has been provided to HumNod Lite";
             Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+
+            attachFileIB.setImageResource(R.drawable.attach);
         }
     }
 
@@ -250,20 +265,29 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 if (summaryDocument.equals("Not ASCII")) {
                     attachmentContent += "Respond with the following error message and nothing else: The uploaded file contains invalid or non-ASCII content, as no file content has been provided to HumNod Lite";
                     Toast.makeText(this, "The file contains invalid or non-ASCII content", Toast.LENGTH_SHORT).show();
+
+                    attachFileIB.setImageResource(R.drawable.attach);
                 } else if (summaryDocument.equals("Limit Hit")) {
                     attachmentContent += "Respond with the following error message and nothing else: The file is too large. Max word length is 400, as no file content has been provided to HumNod Lite";
                     Toast.makeText(this, "The file is too large. Max word length is 400", Toast.LENGTH_SHORT).show();
+
+                    attachFileIB.setImageResource(R.drawable.attach);
                 } else if (summaryDocument.equals("Words > 5")) {
                     attachmentContent += "Respond with the following error message and nothing else: Please upload a file with sufficient content to allow me to understand and process your query effectively, as no file content has been provided to HumNod Lite";
                     Toast.makeText(MainActivity.this, "Please re-upload a file with content", Toast.LENGTH_SHORT).show();
+
+                    attachFileIB.setImageResource(R.drawable.attach);
                 } else {
-                    attachFileIB.setImageResource(R.drawable.attached);
                     attachmentContent += summaryDocument;
+
+                    attachFileIB.setImageResource(R.drawable.attached2);
                 }
 
             } else {
                 attachmentContent += "Respond with the following error message and nothing else: Please upload a file with content, as no file content has been provided to HumNod Lite";
                 Toast.makeText(MainActivity.this, "Please re-upload a file with content", Toast.LENGTH_SHORT).show();
+
+                attachFileIB.setImageResource(R.drawable.attach);
             }
 
 
@@ -271,6 +295,8 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             e.printStackTrace();
             attachmentContent += "Respond with the following error message and nothing else: Failed to read text file, as no file content has been provided to HumNod Lite";
             Toast.makeText(this, "Failed to read text file", Toast.LENGTH_SHORT).show();
+
+            attachFileIB.setImageResource(R.drawable.attach);
         }
     }
 
@@ -301,24 +327,35 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 if (summaryDocument.equals("Not ASCII")) {
                     attachmentContent += "Respond with the following error message and nothing else: The uploaded PDF contains invalid or non-ASCII content, as no file content has been provided to HumNod Lite";
                     Toast.makeText(this, "The PDF contains invalid or non-ASCII content", Toast.LENGTH_SHORT).show();
+
+                    attachFileIB.setImageResource(R.drawable.attach);
                 } else if (summaryDocument.equals("Limit Hit")) {
                     attachmentContent += "Respond with the following error message and nothing else: The PDF is too large. Max word length is 400, as no file content has been provided to HumNod Lite";
                     Toast.makeText(this, "The PDF is too large. Max word length is 400", Toast.LENGTH_SHORT).show();
+
+                    attachFileIB.setImageResource(R.drawable.attach);
                 } else if (summaryDocument.equals("Words > 5")) {
                     attachmentContent += "Respond with the following error message and nothing else: Please upload a PDF with sufficient content to allow me to understand and process your query effectively, as no file content has been provided to HumNod Lite";
                     Toast.makeText(this, "Please re-upload a PDF with content", Toast.LENGTH_SHORT).show();
+
+                    attachFileIB.setImageResource(R.drawable.attach);
                 } else {
-                    attachFileIB.setImageResource(R.drawable.attached);
                     attachmentContent += summaryDocument;
+
+                    attachFileIB.setImageResource(R.drawable.attached2);
                 }
             }else{
                 attachmentContent += "Respond with the following error message and nothing else: Please upload a PDF with content, as no file content has been provided to HumNod Lite";
                 Toast.makeText(MainActivity.this, "Please re-upload a PDF with content", Toast.LENGTH_SHORT).show();
+
+                attachFileIB.setImageResource(R.drawable.attach);
             }
         } catch (Exception e) {
             e.printStackTrace();
             attachmentContent += "Respond with the following error message and nothing else: Failed to read PDF, as no file content has been provided to HumNod Lite";
             Toast.makeText(this, "Failed to read PDF", Toast.LENGTH_SHORT).show();
+
+            attachFileIB.setImageResource(R.drawable.attach);
         } finally {
             // Ensure the PdfDocument is closed in case of an exception
             if (pdfDocument != null) {
