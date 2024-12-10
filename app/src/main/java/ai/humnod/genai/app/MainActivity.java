@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private ImageButton adsButton;
     private ScrollView chatScrollView;
     private ImageButton scrollToBottomButton;
+    private ImageButton websiteButton;
 
 
     private int maxLength = 2000;
@@ -106,8 +107,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private static final String[] SUPPORTED_MIME_TYPES = {
             "application/pdf",
             "text/plain",
-            "application/msword",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             "image/*"
     };
     private static final int PICK_DOCUMENT_REQUEST_CODE = 102;
@@ -136,11 +135,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 attachmentContent += "\nUser has uploaded a text file. Extracted content is provided below. Craft a response based on the data and user query:\n";
                 // Handle TXT file
                 processTextFile(uri);
-
-            } else if (mimeType.equals("application/msword") ||
-                    mimeType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
-                attachmentContent += "\nUser has uploaded a Word document. Extracted content is provided below. Craft a response based on the data and user query:\n";
-                //processWordFile(uri);
 
             } else {
                 attachmentContent += "\nRespond with the following error message and nothing else: The user has uploaded an unsupported file, and no file content has been provided to HumNod Lite";
@@ -257,8 +251,8 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                     attachmentContent += "Respond with the following error message and nothing else: The uploaded file contains invalid or non-ASCII content, as no file content has been provided to HumNod Lite";
                     Toast.makeText(this, "The file contains invalid or non-ASCII content", Toast.LENGTH_SHORT).show();
                 } else if (summaryDocument.equals("Limit Hit")) {
-                    attachmentContent += "Respond with the following error message and nothing else: The file is too large. Max word length is 600, as no file content has been provided to HumNod Lite";
-                    Toast.makeText(this, "The file is too large. Max word length is 600", Toast.LENGTH_SHORT).show();
+                    attachmentContent += "Respond with the following error message and nothing else: The file is too large. Max word length is 400, as no file content has been provided to HumNod Lite";
+                    Toast.makeText(this, "The file is too large. Max word length is 400", Toast.LENGTH_SHORT).show();
                 } else if (summaryDocument.equals("Words > 5")) {
                     attachmentContent += "Respond with the following error message and nothing else: Please upload a file with sufficient content to allow me to understand and process your query effectively, as no file content has been provided to HumNod Lite";
                     Toast.makeText(MainActivity.this, "Please re-upload a file with content", Toast.LENGTH_SHORT).show();
@@ -308,8 +302,8 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                     attachmentContent += "Respond with the following error message and nothing else: The uploaded PDF contains invalid or non-ASCII content, as no file content has been provided to HumNod Lite";
                     Toast.makeText(this, "The PDF contains invalid or non-ASCII content", Toast.LENGTH_SHORT).show();
                 } else if (summaryDocument.equals("Limit Hit")) {
-                    attachmentContent += "Respond with the following error message and nothing else: The PDF is too large. Max word length is 600, as no file content has been provided to HumNod Lite";
-                    Toast.makeText(this, "The PDF is too large. Max word length is 600", Toast.LENGTH_SHORT).show();
+                    attachmentContent += "Respond with the following error message and nothing else: The PDF is too large. Max word length is 400, as no file content has been provided to HumNod Lite";
+                    Toast.makeText(this, "The PDF is too large. Max word length is 400", Toast.LENGTH_SHORT).show();
                 } else if (summaryDocument.equals("Words > 5")) {
                     attachmentContent += "Respond with the following error message and nothing else: Please upload a PDF with sufficient content to allow me to understand and process your query effectively, as no file content has been provided to HumNod Lite";
                     Toast.makeText(this, "Please re-upload a PDF with content", Toast.LENGTH_SHORT).show();
@@ -457,6 +451,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         chatScrollView = findViewById(R.id.chatScrollView);
         settingsButton = findViewById(R.id.idIBSettings);
         adsButton = findViewById(R.id.idIBAds);
+        websiteButton = findViewById(R.id.idIBLogo);
         scrollToBottomButton = findViewById(R.id.scrollToBottomButton);
         isGenerating = false;
         isCharLimitOn = false;
@@ -486,6 +481,17 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         } catch (GenAIException e) {
             throw new RuntimeException(e);
         }
+
+        websiteButton.setOnClickListener(v -> {
+            // Create an Intent to open the web link
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://www.humnod.com"));
+
+            // Check if there's an app to handle the intent before starting
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+            }
+        });
 
         adsButton.setOnClickListener(v -> {
             AdsBottomSheet adsBottomSheet = new AdsBottomSheet();
@@ -637,7 +643,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
                 String systemPrompt = "";
                 if (agentMode.equals("Assistant")) {
-                    systemPrompt = "You are HumNod Lite, an AI assistant developed by UK-based HumNod LTD, led by CEO Arpanjot Singh and CTO Farhan Memon. Your primary objective is to assist users by addressing their queries with clarity, precision, and a friendly tone. Focus exclusively on the user's query, avoiding unnecessary details. Ensure responses are well-organized, divided into clear paragraphs to enhance readability.";
+                    systemPrompt = "You are HumNod Lite, an AI assistant developed by UK-based HumNod LTD, led by CEO Arpanjot Singh and CTO Farhan Memon. Assist users clearly, precisely, and friendly by addressing their queries directly and organizing responses into readable paragraphs. Users may upload files (e.g., images), and you will use the extracted data for analysis. If a user requests analysis without providing data, prompt them to upload the necessary file. If a user asks to analyze a specific format (e.g., PDF) but uploads a different type (e.g., image), inform them of the mismatch and request the correct format. Focus solely on the user’s request, avoid unnecessary details, and ensure clarity in all interactions.";
                 } else if (agentMode.equals("Academic")) {
                     systemPrompt = "You are HumNod Lite, an AI assistant developed by UK-based HumNod LTD, led by CEO Arpanjot Singh and CTO Farhan Memon. Your primary role is to assist users as a learning-oriented search engine, providing accurate, concise, and informative responses similar to resources like Google, Wikipedia, and educational sites. Your responses should be direct, factual, and easy to understand, especially when dealing with subjects like math, science, and general knowledge. Format the information as nicely as possible using Markdown, ensuring that content is well-structured and easy to read. Use headings, bullet points, code blocks, and other Markdown elements to make the presentation clear and engaging. Aim to provide the user with the most relevant and educational information, while maintaining a friendly and supportive tone.";
                 }
