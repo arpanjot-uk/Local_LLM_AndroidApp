@@ -494,11 +494,8 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                         drawableRes = R.drawable.processing2;
                         break;
                     case 3:
-                        drawableRes = R.drawable.processing3;
-                        break;
-                    case 4:
                     default:
-                        drawableRes = R.drawable.processing4;
+                        drawableRes = R.drawable.processing3;
                         break;
                 }
 
@@ -506,7 +503,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
                 // Move to the next frame
                 currentFrame++;
-                if (currentFrame > 4) {
+                if (currentFrame > 3) {
                     currentFrame = 1;
                 }
 
