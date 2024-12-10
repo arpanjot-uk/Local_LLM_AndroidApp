@@ -20,6 +20,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -31,6 +32,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -111,6 +113,14 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     };
     private static final int PICK_DOCUMENT_REQUEST_CODE = 102;
     private OCRHelper ocrHelper;
+
+
+    private ImageView processingIndicator;
+    private Handler processingHandler;
+    private Runnable processingRunnable;
+    private int currentFrame = 1; // Tracks current frame index (1 to 4)
+    private boolean isAnimating = false;
+    private boolean firstTokenReceived = false;
 
 
     /***
@@ -461,6 +471,66 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     }
 
 
+    /**
+     *  Start the animation of the processing indicator
+     */
+    private void startProcessingAnimation() {
+        if (isAnimating) return; // Avoid starting again if already running
+
+        isAnimating = true;
+        processingIndicator.setVisibility(View.VISIBLE);
+        currentFrame = 1;
+
+        processingRunnable = new Runnable() {
+            @Override
+            public void run() {
+                // Cycle through frames: processing1 to processing4
+                int drawableRes;
+                switch (currentFrame) {
+                    case 1:
+                        drawableRes = R.drawable.processing1;
+                        break;
+                    case 2:
+                        drawableRes = R.drawable.processing2;
+                        break;
+                    case 3:
+                        drawableRes = R.drawable.processing3;
+                        break;
+                    case 4:
+                    default:
+                        drawableRes = R.drawable.processing4;
+                        break;
+                }
+
+                processingIndicator.setImageResource(drawableRes);
+
+                // Move to the next frame
+                currentFrame++;
+                if (currentFrame > 4) {
+                    currentFrame = 1;
+                }
+
+                // Schedule next frame update after 300ms (adjust speed as desired)
+                processingHandler.postDelayed(this, 200);
+            }
+        };
+
+        // Start the first frame update immediately
+        processingHandler.post(processingRunnable);
+    }
+
+    private void stopProcessingAnimation() {
+        if (!isAnimating) return;
+        isAnimating = false;
+        processingHandler.removeCallbacks(processingRunnable);
+        processingIndicator.setVisibility(View.GONE);
+    }
+
+
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -509,6 +579,8 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 .build();
         attachmentContent = "";
         ocrHelper = new OCRHelper(this);
+        processingIndicator = findViewById(R.id.processing_indicator);
+        processingHandler = new Handler(getMainLooper());
 
 
         // Trigger the download operation when the application is created
@@ -666,6 +738,10 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                     Toast.makeText(MainActivity.this, "Please enter your message...", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+                // Show the animation here
+                firstTokenReceived = false;
+                startProcessingAnimation();
 
                 // ** Clear accumulated text before starting a new query **
                 accumulatedText.setLength(0);
@@ -947,6 +1023,14 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 if (token == null || token.isEmpty()) {
                     Log.w(TAG, "Received null or empty token, skipping update.");
                     return;
+                }
+
+                // If this is the first token, it means the model just started answering
+                if (!firstTokenReceived) {
+                    firstTokenReceived = true;
+                    // Stop animation and reveal the response area
+                    stopProcessingAnimation();
+                    generatedTV.setVisibility(View.VISIBLE);
                 }
 
                 // Append the new token to the accumulated text

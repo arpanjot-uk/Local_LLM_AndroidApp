@@ -94,19 +94,36 @@
                 tools:visibility="visible"
                 android:elevation="8dp"/>
 
-            <TextView
-                android:id="@+id/sample_text"
+            <!-- Container for the assistant's bubble and the animation -->
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/rounded_corner2"
-                android:padding="8dp"
-                android:scrollbars="vertical"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textSize="16sp"
-                android:visibility="invisible"
-                tools:text="Sample Bubble Example"
-                tools:visibility="visible" />
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/sample_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_corner2"
+                    android:padding="8dp"
+                    android:scrollbars="vertical"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textSize="16sp"
+                    android:visibility="invisible"
+                    tools:text="Sample Bubble Example"
+                    tools:visibility="visible" />
+
+                <!-- Processing Indicator positioned at top-left of sample_text -->
+                <ImageView
+                    android:id="@+id/processing_indicator"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:visibility="gone"
+                    android:layout_marginStart="20dp"
+                    android:src="@drawable/processing1" />
+            </RelativeLayout>
 
         </LinearLayout>
     </ScrollView>
