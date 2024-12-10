@@ -619,12 +619,26 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                     Log.i(TAG, "Setting max response length to: " + maxLength);
                     Log.i(TAG, "Setting length penalty to: " + lengthPenalty);
                     Log.i(TAG, "Setting agent mode to: " + agentMode);
+
+                    // Determine if the attachment button should be enabled
+                    boolean isAssistantMode = agentMode.equals("Assistant");
+                    boolean hasPermissions = MainActivity.this.hasAllPermissions; // Ensure permissions are granted
+                    boolean isModelNotRunning = !MainActivity.this.isGenerating; // Ensure model is not running
+
+                    if (isAssistantMode && hasPermissions && isModelNotRunning) {
+                        attachFileIB.setEnabled(true); // Enable the button
+                        attachFileIB.setAlpha(1.0f);  // Restore full opacity
+                    } else {
+                        attachFileIB.setEnabled(false); // Disable the button
+                        attachFileIB.setAlpha(0.5f);  // Dim the button to indicate it's disabled
+                    }
                 }
             });
 
             // Show the BottomSheet
             bottomSheet.show(getSupportFragmentManager(), "BottomSheet");
         });
+
 
 
         // Set up scroll listener for chatScrollView
@@ -672,7 +686,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                         sendMsgIB.setEnabled(true);
                         sendMsgIB.setAlpha(1.0f);
 
-                        if (hasAllPermissions) {
+                        if (hasAllPermissions && agentMode.equals("Assistant")) {
                             attachFileIB.setEnabled(true); // Disable input field to prevent editing
                             attachFileIB.setAlpha(1.0f);  // Make it visually lighter to show it is disabled
                         }

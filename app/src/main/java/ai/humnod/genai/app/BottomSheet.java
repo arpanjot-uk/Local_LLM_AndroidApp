@@ -62,7 +62,7 @@ public class BottomSheet extends BottomSheetDialogFragment {
         if (getArguments() != null) {
             int maxLength = getArguments().getInt(ARG_MAX_LENGTH, 100); // Default is 100 if no argument
             float lengthPenalty = getArguments().getFloat(ARG_LENGTH_PENALTY, 1.0f); // Default is 1.0f if no argument
-            String agentMode = getArguments().getString("response_modes", "Assistant"); // Default is "Assistant"
+            String agentMode = getArguments().getString("agentMode", "Assistant"); // Default is "Assistant"
 
             maxLengthEditText.setText(String.valueOf(maxLength));
             lengthPenaltyEditText.setText(String.valueOf(lengthPenalty));
