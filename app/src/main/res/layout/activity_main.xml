@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingVertical="10dp"
     android:paddingHorizontal="5dp"
     android:background="@color/white"
@@ -105,7 +106,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rounded_corner2"
-                    android:padding="8dp"
+                    android:paddingTop="30dp"
+                    android:paddingBottom="8dp"
+                    android:paddingHorizontal="8dp"
                     android:scrollbars="vertical"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textSize="16sp"
@@ -122,7 +125,21 @@
                     android:layout_alignParentStart="true"
                     android:visibility="gone"
                     android:layout_marginStart="15dp"
+                    android:layout_marginTop="8dp"
                     android:src="@drawable/processing1" />
+
+                <!-- Copy Button positioned at top-right of sample_text -->
+                <ImageButton
+                    android:id="@+id/copyButton"
+                    android:layout_width="55dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/rounded_button1"
+                    android:src="@drawable/copy"
+                    app:tint="@color/white"
+                    android:visibility="gone" />
             </RelativeLayout>
 
         </LinearLayout>

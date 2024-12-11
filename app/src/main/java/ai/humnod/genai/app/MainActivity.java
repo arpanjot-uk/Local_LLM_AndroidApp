@@ -10,6 +10,8 @@ import android.Manifest;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private ScrollView chatScrollView;
     private ImageButton scrollToBottomButton;
     private ImageButton websiteButton;
+    private ImageButton copyButton;
 
 
     private boolean isBottomSheetShown = false;
@@ -554,6 +557,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         attachFileIB.setEnabled(false);
         userMsgEdt = findViewById(R.id.idEdtMessage);
         generatedTV = findViewById(R.id.sample_text);
+        copyButton = findViewById(R.id.copyButton);
         promptTV = findViewById(R.id.user_text);
         progressText = findViewById(R.id.progress_text);
         progressBar = findViewById(R.id.progress_bar);
@@ -735,6 +739,47 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         //enable scrolling and resizing of text boxes
         generatedTV.setMovementMethod(new ScrollingMovementMethod());
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+
+        // Monitor text changes to toggle copy button visibility
+        generatedTV.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                // Show the copy button if text is present, hide otherwise
+                if (!charSequence.toString().trim().isEmpty()) {
+                    copyButton.setVisibility(View.VISIBLE);
+                } else {
+                    copyButton.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
+        });
+
+        // Handle copy button click
+        copyButton.setOnClickListener(v -> {
+            String textToCopy = generatedTV.getText().toString().trim();
+            if (!textToCopy.isEmpty()) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Copied Text", textToCopy);
+                clipboard.setPrimaryClip(clip);
+
+                // Change the button icon to indicate success
+                copyButton.setImageResource(R.drawable.copied);
+
+                // Restore the original icon after 6 seconds
+                new Handler().postDelayed(() -> {
+                    copyButton.setImageResource(R.drawable.copy);
+                }, 6000);
+            } else {
+                Toast.makeText(MainActivity.this, "Nothing to copy!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         // adding on click listener for send message button.
         sendMsgIB.setOnClickListener(new View.OnClickListener() {
