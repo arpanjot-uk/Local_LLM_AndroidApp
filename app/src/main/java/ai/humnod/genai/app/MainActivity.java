@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private ImageButton websiteButton;
 
 
+    private boolean isBottomSheetShown = false;
     private int maxLength = 2000;
     private float lengthPenalty = 1.0f;
     private String agentMode = "Assistant";
@@ -523,6 +524,10 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         processingIndicator.setVisibility(View.GONE);
     }
 
+    public void onBottomSheetDismissed() {
+        isBottomSheetShown = false;
+    }
+
 
 
 
@@ -600,43 +605,49 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         });
 
         adsButton.setOnClickListener(v -> {
-            AdsBottomSheet adsBottomSheet = new AdsBottomSheet();
-            adsBottomSheet.show(getSupportFragmentManager(), "AdsBottomSheet");
+            if (!isBottomSheetShown) {
+                isBottomSheetShown = true; // Set the flag to true
+                AdsBottomSheet adsBottomSheet = new AdsBottomSheet();
+                adsBottomSheet.show(getSupportFragmentManager(), "AdsBottomSheet");
+            }
         });
 
         settingsButton.setOnClickListener(v -> {
-            // Pass the updated maxLength, lengthPenalty, and agentMode from MainActivity to BottomSheet
-            BottomSheet bottomSheet = BottomSheet.newInstance(maxLength, lengthPenalty, agentMode);
+            if (!isBottomSheetShown) {
+                isBottomSheetShown = true; // Set the flag to true
+                // Pass the updated maxLength, lengthPenalty, and agentMode from MainActivity to BottomSheet
+                BottomSheet bottomSheet = BottomSheet.newInstance(maxLength, lengthPenalty, agentMode);
 
-            bottomSheet.setSettingsListener(new BottomSheet.SettingsListener() {
-                @Override
-                public void onSettingsApplied(int maxLength, float lengthPenalty, String agentMode) {
-                    // Update MainActivity's fields when new values are applied
-                    MainActivity.this.maxLength = maxLength;
-                    MainActivity.this.lengthPenalty = lengthPenalty;
-                    MainActivity.this.agentMode = agentMode; // Update agentMode as well
+                bottomSheet.setSettingsListener(new BottomSheet.SettingsListener() {
+                    @Override
+                    public void onSettingsApplied(int maxLength, float lengthPenalty, String agentMode) {
+                        // Update MainActivity's fields when new values are applied
+                        MainActivity.this.maxLength = maxLength;
+                        MainActivity.this.lengthPenalty = lengthPenalty;
+                        MainActivity.this.agentMode = agentMode; // Update agentMode as well
 
-                    Log.i(TAG, "Setting max response length to: " + maxLength);
-                    Log.i(TAG, "Setting length penalty to: " + lengthPenalty);
-                    Log.i(TAG, "Setting agent mode to: " + agentMode);
+                        Log.i(TAG, "Setting max response length to: " + maxLength);
+                        Log.i(TAG, "Setting length penalty to: " + lengthPenalty);
+                        Log.i(TAG, "Setting agent mode to: " + agentMode);
 
-                    // Determine if the attachment button should be enabled
-                    boolean isAssistantMode = agentMode.equals("Assistant");
-                    boolean hasPermissions = MainActivity.this.hasAllPermissions; // Ensure permissions are granted
-                    boolean isModelNotRunning = !MainActivity.this.isGenerating; // Ensure model is not running
+                        // Determine if the attachment button should be enabled
+                        boolean isAssistantMode = agentMode.equals("Assistant");
+                        boolean hasPermissions = MainActivity.this.hasAllPermissions; // Ensure permissions are granted
+                        boolean isModelNotRunning = !MainActivity.this.isGenerating; // Ensure model is not running
 
-                    if (isAssistantMode && hasPermissions && isModelNotRunning) {
-                        attachFileIB.setEnabled(true); // Enable the button
-                        attachFileIB.setAlpha(1.0f);  // Restore full opacity
-                    } else {
-                        attachFileIB.setEnabled(false); // Disable the button
-                        attachFileIB.setAlpha(0.5f);  // Dim the button to indicate it's disabled
+                        if (isAssistantMode && hasPermissions && isModelNotRunning) {
+                            attachFileIB.setEnabled(true); // Enable the button
+                            attachFileIB.setAlpha(1.0f);  // Restore full opacity
+                        } else {
+                            attachFileIB.setEnabled(false); // Disable the button
+                            attachFileIB.setAlpha(0.5f);  // Dim the button to indicate it's disabled
+                        }
                     }
-                }
-            });
+                });
 
-            // Show the BottomSheet
-            bottomSheet.show(getSupportFragmentManager(), "BottomSheet");
+                // Show the BottomSheet
+                bottomSheet.show(getSupportFragmentManager(), "BottomSheet");
+            }
         });
 
 

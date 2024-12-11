@@ -1,5 +1,6 @@
 package ai.humnod.genai.app;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -113,7 +114,21 @@ public class BottomSheet extends BottomSheetDialogFragment {
             }
         });
 
+        // Set up close button
+        ImageButton closeButton = view.findViewById(R.id.close_button);
+        closeButton.setOnClickListener(v -> dismiss());
+
         return view;
+    }
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+
+        // Notify that the BottomSheet has been dismissed
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).onBottomSheetDismissed();
+        }
     }
 
 }

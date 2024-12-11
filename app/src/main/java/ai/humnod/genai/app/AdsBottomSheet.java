@@ -1,5 +1,6 @@
 package ai.humnod.genai.app;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,5 +36,15 @@ public class AdsBottomSheet extends BottomSheetDialogFragment {
         closeButton.setOnClickListener(v -> dismiss());
 
         return view;
+    }
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+
+        // Notify that the AdsBottomSheet has been dismissed
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).onBottomSheetDismissed();
+        }
     }
 }

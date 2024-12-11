@@ -1,17 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="16dp"
     android:background="@color/white">
 
+    <!-- Close Button (top right corner) -->
+    <ImageButton
+        android:id="@+id/close_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="16dp"
+        android:background="@drawable/rounded_button"
+        android:hapticFeedbackEnabled="true"
+        android:src="@drawable/windows_cross"
+        tools:ignore="UseAppTint" />
+
+    <!-- Settings Page Title -->
+    <TextView
+        android:id="@+id/settingsPageTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
+        android:layout_toStartOf="@id/close_button"
+        android:text="Settings"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
     <!-- Container for Max Response Length -->
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/maxResponseLengthContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_below="@id/close_button"
+        android:layout_marginTop="16dp"
         android:padding="16dp"
         android:background="@drawable/rounded_container">
 
@@ -50,9 +82,11 @@
 
     <!-- Container for Length Penalty -->
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lengthPenaltyContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_below="@id/maxResponseLengthContainer"
+        android:layout_marginTop="16dp"
         android:padding="16dp"
         android:background="@drawable/rounded_container">
 
@@ -91,9 +125,11 @@
 
     <!-- Container for Agent Type -->
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/agentTypeContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_below="@id/lengthPenaltyContainer"
+        android:layout_marginTop="16dp"
         android:padding="16dp"
         android:background="@drawable/rounded_container">
 
@@ -130,12 +166,13 @@
         android:id="@+id/applySettingsButton"
         android:layout_width="80dp"
         android:layout_height="50dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginStart="5dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/agentTypeContainer"
+        android:layout_marginTop="16dp"
         android:background="@drawable/rounded_button"
         android:src="@drawable/apply"
         android:contentDescription="Attach button"
         android:hapticFeedbackEnabled="true"
         android:visibility="visible" />
 
-</LinearLayout>
+</RelativeLayout>

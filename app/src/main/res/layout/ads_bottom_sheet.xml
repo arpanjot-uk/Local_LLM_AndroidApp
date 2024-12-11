@@ -21,6 +21,23 @@
         android:src="@drawable/windows_cross"
         tools:ignore="UseAppTint" />
 
+    <!-- Ads Page Title -->
+    <TextView
+        android:id="@+id/adsPageTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
+        android:layout_toStartOf="@id/close_button"
+        android:text="Donate"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
     <!-- Container for the Thank You Message -->
     <RelativeLayout
         android:id="@+id/thankYouContainer"
