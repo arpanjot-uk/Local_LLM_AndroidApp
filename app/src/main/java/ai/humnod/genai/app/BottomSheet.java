@@ -1,6 +1,8 @@
 package ai.humnod.genai.app;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class BottomSheet extends BottomSheetDialogFragment {
@@ -21,6 +24,7 @@ public class BottomSheet extends BottomSheetDialogFragment {
     private EditText lengthPenaltyEditText;
     private SettingsListener settingsListener;
     private Spinner responseModeSpinner;
+    private ImageButton helpButton;
 
     private static final String ARG_MAX_LENGTH = "max_length";
     private static final String ARG_LENGTH_PENALTY = "length_penalty";
@@ -52,6 +56,7 @@ public class BottomSheet extends BottomSheetDialogFragment {
         lengthPenaltyEditText = view.findViewById(R.id.idEdtLengthPenalty);
         ImageButton applyButton = view.findViewById(R.id.applySettingsButton);
         responseModeSpinner = view.findViewById(R.id.idSpinnerResponseMode);
+        helpButton = view.findViewById(R.id.helpButton);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),
                 R.array.response_modes, android.R.layout.simple_spinner_item);
@@ -114,11 +119,31 @@ public class BottomSheet extends BottomSheetDialogFragment {
             }
         });
 
+        helpButton.setOnClickListener(v -> {
+            String url = "https://humnod.com/blog-humnod-app-settings";
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            startActivity(intent);
+        });
+
         // Set up close button
         ImageButton closeButton = view.findViewById(R.id.close_button);
         closeButton.setOnClickListener(v -> dismiss());
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        View bottomSheet = getDialog().findViewById(com.google.android.material.R.id.design_bottom_sheet);
+        if (bottomSheet != null) {
+            // Set the BottomSheet to expand fully
+            bottomSheet.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+            BottomSheetBehavior<?> behavior = BottomSheetBehavior.from(bottomSheet);
+            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            behavior.setPeekHeight(0); // Prevent it from collapsing
+        }
     }
 
     @Override

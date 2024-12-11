@@ -9,6 +9,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -36,6 +38,19 @@ public class AdsBottomSheet extends BottomSheetDialogFragment {
         closeButton.setOnClickListener(v -> dismiss());
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        View bottomSheet = getDialog().findViewById(com.google.android.material.R.id.design_bottom_sheet);
+        if (bottomSheet != null) {
+            // Set the BottomSheet to expand fully
+            bottomSheet.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+            BottomSheetBehavior<?> behavior = BottomSheetBehavior.from(bottomSheet);
+            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            behavior.setPeekHeight(0); // Prevent it from collapsing
+        }
     }
 
     @Override

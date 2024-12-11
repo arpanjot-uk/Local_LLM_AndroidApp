@@ -33,7 +33,7 @@
         android:layout_marginEnd="16dp"
         android:gravity="center"
         android:layout_toStartOf="@id/close_button"
-        android:text="Donate"
+        android:text="Support"
         android:textColor="@color/black"
         android:textSize="30sp"
         android:textStyle="bold" />
