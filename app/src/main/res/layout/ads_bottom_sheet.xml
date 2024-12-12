@@ -33,7 +33,7 @@
         android:layout_marginEnd="16dp"
         android:gravity="center"
         android:layout_toStartOf="@id/close_button"
-        android:text="Support"
+        android:text="Support Us"
         android:textColor="@color/black"
         android:textSize="30sp"
         android:textStyle="bold" />
@@ -54,12 +54,12 @@
             android:id="@+id/thank_you_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textColor="#176379"
             android:textStyle="bold"
             android:gravity="center"
             android:layout_centerInParent="true"
-            tools:text="Thank you for donating your time! :)" />
+            tools:text="" />
     </RelativeLayout>
 
     <!-- Container for Google Ads -->

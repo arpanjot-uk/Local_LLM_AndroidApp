@@ -25,7 +25,7 @@ public class AdsBottomSheet extends BottomSheetDialogFragment {
 
         // Set up the thank-you message
         TextView thankYouTextView = view.findViewById(R.id.thank_you_text);
-        thankYouTextView.setText("Thank you for donating your time!");
+        thankYouTextView.setText("Thank you for watching the ad and supporting us!");
 
         // Set up Google Ads
         MobileAds.initialize(requireContext(), initializationStatus -> {});
