@@ -3,6 +3,8 @@ package ai.humnod.genai.app;
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 import android.util.Pair;
 
@@ -95,5 +97,17 @@ public class ModelDownloader {
     } catch (GenAIException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public static boolean isWifiConnected(Context context) {
+    ConnectivityManager connectivityManager =
+            (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    if (connectivityManager != null) {
+      NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+      if (networkInfo != null && networkInfo.isConnected()) {
+        return networkInfo.getType() == ConnectivityManager.TYPE_WIFI;
+      }
+    }
+    return false;
   }
 }

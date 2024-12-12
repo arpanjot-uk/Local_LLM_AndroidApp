@@ -35,6 +35,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private TextView promptTV;
     private TextView progressText;
     private ProgressBar progressBar;
+    private LinearLayout progressContainer;
     private ImageButton settingsButton;
     private ImageButton adsButton;
     private ScrollView chatScrollView;
@@ -559,6 +561,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         generatedTV = findViewById(R.id.sample_text);
         copyButton = findViewById(R.id.copyButton);
         promptTV = findViewById(R.id.user_text);
+        progressContainer = findViewById(R.id.progressContainer);
         progressText = findViewById(R.id.progress_text);
         progressBar = findViewById(R.id.progress_bar);
         chatScrollView = findViewById(R.id.chatScrollView);
@@ -992,6 +995,13 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
 
     private void downloadModels(Context context) throws GenAIException {
+        if (!ModelDownloader.isWifiConnected(context)) {
+            runOnUiThread(() -> {
+                progressText.setVisibility(View.VISIBLE);
+                progressText.setText("Model download is only available with Wi-Fi");
+            });
+            return;
+        }
 
         // If the download stops working use the HM repository which works. The link formatting requires
         // "repository name"/resolve/main in the url the resolve key word is non included.
@@ -1028,6 +1038,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
         // Set ProgressBar and ProgressText visibility to visible and reset progress
         runOnUiThread(() -> {
+            progressContainer.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setProgress(0);
             progressText.setVisibility(View.VISIBLE);
@@ -1066,6 +1077,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                             Toast.makeText(context, "HumNod Lite download completed", Toast.LENGTH_SHORT).show();
                             progressBar.setVisibility(View.INVISIBLE); // Hide the progress bar when done
                             progressText.setVisibility(View.INVISIBLE); // Hide the progress text when done
+                            progressContainer.setVisibility(View.INVISIBLE);
                         });
                     } catch (GenAIException e) {
                         e.printStackTrace();
