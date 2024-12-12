@@ -87,6 +87,7 @@
                 android:drawableStart="@drawable/frame"
                 android:drawablePadding="8dp"
                 android:padding="8dp"
+                android:textColor="@color/text"
                 android:textAlignment="viewStart"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textSize="16sp"
@@ -109,6 +110,7 @@
                     android:paddingTop="30dp"
                     android:paddingBottom="8dp"
                     android:paddingHorizontal="8dp"
+                    android:textColor="@color/text"
                     android:scrollbars="vertical"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textSize="16sp"
@@ -166,7 +168,11 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:padding="15dp"
+        android:background="@drawable/rounded_edittext_border_search"
+        android:visibility="invisible"
+        tools:visibility="visible">
 
         <!-- Progress Text Section -->
         <TextView
@@ -174,11 +180,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Loading..."
+            android:textColor="@color/text"
+            android:textSize="14sp"
+            android:layout_marginBottom="10dp"
             android:visibility="invisible"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            tools:visibility="visible"
-            android:layout_marginBottom="10dp" />
+            tools:visibility="visible" />
 
         <!-- Progress Bar Section (Below Progress Text) -->
         <ProgressBar
@@ -214,6 +220,7 @@
             android:padding="10dp"
             android:layout_margin="18dp"
             android:elevation="8dp"
+            android:textColor="@color/text"
             android:background="@drawable/rounded_edittext_border_search"
             android:gravity="center_vertical"
             android:hint="Type your message"

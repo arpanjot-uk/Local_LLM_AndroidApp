@@ -22,6 +22,7 @@
             android:text="Insufficient Memory"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textStyle="bold"
+            android:textColor="@color/text"
             android:layout_marginBottom="10dp"
             android:gravity="center_horizontal" />
 
@@ -30,7 +31,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="This application requires at least 6 GB of RAM to run properly. Your device does not meet this requirement."
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/text"
+            android:textSize="16sp"
             android:gravity="center_horizontal" />
 
         <ImageButton

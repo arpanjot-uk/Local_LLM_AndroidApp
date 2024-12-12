@@ -995,14 +995,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
 
     private void downloadModels(Context context) throws GenAIException {
-        if (!ModelDownloader.isWifiConnected(context)) {
-            runOnUiThread(() -> {
-                progressText.setVisibility(View.VISIBLE);
-                progressText.setText("Model download is only available with Wi-Fi");
-            });
-            return;
-        }
-
         // If the download stops working use the HM repository which works. The link formatting requires
         // "repository name"/resolve/main in the url the resolve key word is non included.
 
@@ -1028,11 +1020,22 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                         file));
             }
         }
+
+        // Check if all required files already exist
         if (urlFilePairs.isEmpty()) {
             // Display a message using Toast
             Log.d(TAG, "All files already exist. Skipping download.");
             model = new Model(getFilesDir().getPath());
             tokenizer = model.createTokenizer();
+            return;
+        }
+        // Check if the device is connected to Wi-Fi
+        if (!ModelDownloader.isWifiConnected(context)) {
+            runOnUiThread(() -> {
+                progressContainer.setVisibility(View.VISIBLE);
+                progressText.setVisibility(View.VISIBLE);
+                progressText.setText("Model download is only available with Wi-Fi");
+            });
             return;
         }
 

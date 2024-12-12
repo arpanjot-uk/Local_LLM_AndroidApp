@@ -16,6 +16,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:layout_margin="16dp"
+        android:elevation="8dp"
         android:background="@drawable/rounded_button"
         android:hapticFeedbackEnabled="true"
         android:src="@drawable/windows_cross"
@@ -34,8 +35,9 @@
         android:gravity="center"
         android:layout_toStartOf="@id/close_button"
         android:text="Support Us"
-        android:textColor="@color/black"
+        android:textColor="@color/text"
         android:textSize="30sp"
+        android:elevation="8dp"
         android:textStyle="bold" />
 
     <!-- Container for the Thank You Message -->
@@ -54,8 +56,8 @@
             android:id="@+id/thank_you_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="#176379"
+            android:textSize="14sp"
+            android:textColor="@color/text"
             android:textStyle="bold"
             android:gravity="center"
             android:layout_centerInParent="true"
@@ -71,7 +73,7 @@
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="30dp"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/rounded_container"
+        android:background="@drawable/rounded_edittext_border_menu"
         android:padding="16dp"
         android:elevation="8dp">
 
