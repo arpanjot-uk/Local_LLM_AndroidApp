@@ -91,7 +91,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private ProgressBar progressBar;
     private LinearLayout progressContainer;
     private ImageButton settingsButton;
-    private ImageButton adsButton;
     private ScrollView chatScrollView;
     private ImageButton scrollToBottomButton;
     private ImageButton websiteButton;
@@ -567,8 +566,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         progressBar = findViewById(R.id.progress_bar);
         chatScrollView = findViewById(R.id.chatScrollView);
         settingsButton = findViewById(R.id.idIBSettings);
-        adsButton = findViewById(R.id.idIBAds);
-        websiteButton = findViewById(R.id.idIBLogo);
+        websiteButton = findViewById(R.id.idIBWebsite);
         scrollToBottomButton = findViewById(R.id.scrollToBottomButton);
         isGenerating = false;
         isCharLimitOn = false;
@@ -613,13 +611,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             }
         });
 
-        adsButton.setOnClickListener(v -> {
-            if (!isBottomSheetShown) {
-                isBottomSheetShown = true; // Set the flag to true
-                AdsBottomSheet adsBottomSheet = new AdsBottomSheet();
-                adsBottomSheet.show(getSupportFragmentManager(), "AdsBottomSheet");
-            }
-        });
 
         settingsButton.setOnClickListener(v -> {
             if (!isBottomSheetShown) {
