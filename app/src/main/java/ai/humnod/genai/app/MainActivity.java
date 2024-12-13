@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
 
     private boolean isCharLimitOn;
+    private boolean isCharInLimit;
 
 
     private static final int PERMISSION_REQUEST_CODE = 100;
@@ -571,6 +572,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         scrollToBottomButton = findViewById(R.id.scrollToBottomButton);
         isGenerating = false;
         isCharLimitOn = false;
+        isCharInLimit = false;
         markwon = Markwon.builder(this)
                 .usePlugin(new AbstractMarkwonPlugin() {
                     @Override
@@ -642,7 +644,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                         boolean hasPermissions = MainActivity.this.hasAllPermissions; // Ensure permissions are granted
                         boolean isModelNotRunning = !MainActivity.this.isGenerating; // Ensure model is not running
 
-                        if (isAssistantMode && hasPermissions && isModelNotRunning) {
+                        if (isAssistantMode && hasPermissions && isModelNotRunning && isCharInLimit) {
                             attachFileIB.setEnabled(true); // Enable the button
                             attachFileIB.setAlpha(1.0f);  // Restore full opacity
                         } else {
@@ -694,6 +696,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                         sendMsgIB.setAlpha(0.5f);
 
                         if (!isCharLimitOn) {
+                            isCharInLimit = false; // User for settings apply filter
                             isCharLimitOn = true;
                             Toast.makeText(MainActivity.this, "Please enter at least 12 characters.", Toast.LENGTH_SHORT).show();
                         }
@@ -701,6 +704,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                         attachFileIB.setEnabled(false); // Disable input field to prevent editing
                         attachFileIB.setAlpha(0.5f);  // Make it visually lighter to show it is disabled
                     } else {
+                        isCharInLimit = true;
                         sendMsgIB.setEnabled(true);
                         sendMsgIB.setAlpha(1.0f);
 
