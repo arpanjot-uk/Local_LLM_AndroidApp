@@ -58,10 +58,15 @@ public class BottomSheet extends BottomSheetDialogFragment {
         responseModeSpinner = view.findViewById(R.id.idSpinnerResponseMode);
         helpButton = view.findViewById(R.id.helpButton);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),
-                R.array.response_modes, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.response_modes, // Your array of options
+                R.layout.spinner_item // Use the custom layout for items
+        );
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Optionally set the dropdown resource to the same layout for consistency
+        adapter.setDropDownViewResource(R.layout.spinner_item);
+
         responseModeSpinner.setAdapter(adapter);
 
         // Get arguments and pre-fill the EditTexts and Spinner

@@ -162,6 +162,8 @@
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:background="@drawable/rounded_edittext_border_menu"
+            android:popupBackground="@drawable/rounded_edittext_border_menu"
+            android:dropDownVerticalOffset="50dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
