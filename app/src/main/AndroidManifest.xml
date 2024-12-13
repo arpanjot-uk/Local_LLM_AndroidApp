@@ -5,6 +5,7 @@
 
     <!-- Internet Permission -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- Storage Permissions for Android 7 to Android 12 (API levels 24 to 32) -->
     <uses-permission

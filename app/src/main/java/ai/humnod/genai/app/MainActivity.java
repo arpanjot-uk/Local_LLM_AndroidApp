@@ -601,14 +601,10 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         }
 
         websiteButton.setOnClickListener(v -> {
-            // Create an Intent to open the web link
+            String url = "https://humnod.com";
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://www.humnod.com"));
-
-            // Check if there's an app to handle the intent before starting
-            if (intent.resolveActivity(getPackageManager()) != null) {
-                startActivity(intent);
-            }
+            intent.setData(Uri.parse(url));
+            startActivity(intent);
         });
 
 
