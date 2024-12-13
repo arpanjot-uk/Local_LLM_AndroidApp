@@ -601,7 +601,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         }
 
         websiteButton.setOnClickListener(v -> {
-            String url = "https://humnod.com";
+            String url = "https://humnod.com/home";
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(url));
             startActivity(intent);
