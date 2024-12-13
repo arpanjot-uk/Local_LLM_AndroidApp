@@ -57,8 +57,6 @@ dependencies {
     //MarkDown
     implementation ("io.noties.markwon:core:4.6.2")
 
-    implementation ("com.google.android.gms:play-services-ads:21.0.0")
-
     implementation("com.google.mlkit:text-recognition:16.0.1")
 
     implementation ("com.itextpdf:itext7-core:7.2.3")
