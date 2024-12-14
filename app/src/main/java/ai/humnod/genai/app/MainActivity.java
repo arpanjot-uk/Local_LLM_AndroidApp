@@ -128,6 +128,12 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     private boolean isAnimating = false;
     private boolean firstTokenReceived = false;
 
+    private ImageView welcomeAnimation;
+    private Handler welcomeHandler;
+    private Runnable welcomeRunnable;
+    private int currentWelcomeFrame = 4930; // Starting frame index
+    private boolean runWelcomeAnimation = true; // Control flag for the animation
+
 
     /***
      *  Handling the users selected file
@@ -534,6 +540,50 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     }
 
 
+    private void startWelcomeAnimation() {
+        if (!runWelcomeAnimation) return; // Do not start if already played
+
+        welcomeAnimation.setVisibility(View.VISIBLE);
+        currentWelcomeFrame = 4930; // Reset to the first frame
+
+        welcomeRunnable = new Runnable() {
+            @Override
+            public void run() {
+                // Update the ImageView with the current frame
+                String frameName = "frame_100000" + currentWelcomeFrame;
+                int drawableId = getResources().getIdentifier(frameName, "drawable", getPackageName());
+                welcomeAnimation.setImageResource(drawableId);
+
+                // Move to the next frame
+                currentWelcomeFrame++;
+
+                if (currentWelcomeFrame > 4965) {
+                    // Stop the animation after completing the sequence
+                    return;
+                }
+
+                // Determine the delay based on the current frame
+                long delay;
+                if (currentWelcomeFrame > 4960 && currentWelcomeFrame <= 4965) {
+                    delay = 400; // Slower delay for frames 4961-4965
+                } else {
+                    delay = 100; // Default delay for other frames
+                }
+
+                // Schedule the next frame update
+                welcomeHandler.postDelayed(this, delay);
+            }
+        };
+
+        // Start the animation
+        welcomeHandler.post(welcomeRunnable);
+    }
+
+    private void stopWelcomeAnimation() {
+        welcomeHandler.removeCallbacks(welcomeRunnable);
+        welcomeAnimation.setVisibility(View.GONE);
+        runWelcomeAnimation = false; // Prevent the animation from running again
+    }
 
 
 
@@ -590,6 +640,8 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         ocrHelper = new OCRHelper(this);
         processingIndicator = findViewById(R.id.processing_indicator);
         processingHandler = new Handler(getMainLooper());
+        welcomeAnimation = findViewById(R.id.welcome_animation);
+        welcomeHandler = new Handler();
 
 
         // Trigger the download operation when the application is created
@@ -599,6 +651,9 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         } catch (GenAIException e) {
             throw new RuntimeException(e);
         }
+
+        // Start the welcome animation
+        startWelcomeAnimation();
 
         websiteButton.setOnClickListener(v -> {
             String url = "https://humnod.com/home";
@@ -798,6 +853,11 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                     // if the edit text is empty display a toast message.
                     Toast.makeText(MainActivity.this, "Please enter your message...", Toast.LENGTH_SHORT).show();
                     return;
+                }
+
+                // Check if the welcome animation is running and stop it
+                if (runWelcomeAnimation) {
+                    stopWelcomeAnimation();
                 }
 
                 // Show the animation here
