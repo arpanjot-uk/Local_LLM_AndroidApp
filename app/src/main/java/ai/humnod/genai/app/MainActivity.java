@@ -540,7 +540,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
     }
 
 
-    private void startWelcomeAnimation() {
+    private void welcomeAnimation() {
         if (!runWelcomeAnimation) return; // Do not start if already played
 
         welcomeAnimation.setVisibility(View.VISIBLE);
@@ -577,6 +577,14 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
         // Start the animation
         welcomeHandler.post(welcomeRunnable);
+    }
+
+    private void startWelcomeAnimation() {
+        if (model != null && tokenizer != null) {
+            runOnUiThread(() -> {
+                welcomeAnimation();
+            });
+        }
     }
 
     private void stopWelcomeAnimation() {
@@ -652,8 +660,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             throw new RuntimeException(e);
         }
 
-        // Start the welcome animation
-        startWelcomeAnimation();
 
         websiteButton.setOnClickListener(v -> {
             String url = "https://humnod.com/home";
@@ -1078,6 +1084,9 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             Log.d(TAG, "All files already exist. Skipping download.");
             model = new Model(getFilesDir().getPath());
             tokenizer = model.createTokenizer();
+
+            // Calling welcome animation
+            startWelcomeAnimation();
             return;
         }
         // Check if the device is connected to Wi-Fi
@@ -1133,6 +1142,9 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                             progressText.setVisibility(View.INVISIBLE); // Hide the progress text when done
                             progressContainer.setVisibility(View.INVISIBLE);
                         });
+
+                        // Calling welcome animation
+                        startWelcomeAnimation();
                     } catch (GenAIException e) {
                         e.printStackTrace();
                         throw new RuntimeException(e);
