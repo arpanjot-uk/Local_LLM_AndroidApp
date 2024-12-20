@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_margin="5dp"
-        android:background="@drawable/notch_background"
+        android:background="@drawable/filled_background"
         android:padding="8dp"
         android:elevation="8dp">
 
@@ -27,9 +27,9 @@
             android:layout_height="40dp"
             android:layout_alignParentStart="true"
             android:layout_marginEnd="10dp"
-            android:background="@drawable/rounded_button"
+            android:background="@drawable/main_rounded_button"
             android:hapticFeedbackEnabled="true"
-            android:src="@drawable/web"
+            android:src="@drawable/ic_web"
             android:tint="@color/white"
             tools:ignore="UseAppTint" />
 
@@ -41,9 +41,9 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_centerInParent="true"
-            android:background="#E8ECEF"
+            android:background="@color/humnod_shade"
             android:hapticFeedbackEnabled="true"
-            android:src="@drawable/humnod"
+            android:src="@drawable/ic_humnod"
             tools:ignore="UseAppTint" />
 
         <!-- Settings Button (Right) -->
@@ -52,9 +52,9 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentEnd="true"
-            android:background="@drawable/rounded_button"
+            android:background="@drawable/main_rounded_button"
             android:hapticFeedbackEnabled="true"
-            android:src="@drawable/humnod_settings"
+            android:src="@drawable/ic_settings"
             android:tint="@color/white"
             tools:ignore="UseAppTint" />
     </RelativeLayout>
@@ -83,8 +83,8 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_marginHorizontal="8dp"
-                android:background="@drawable/rounded_corner"
-                android:drawableStart="@drawable/frame"
+                android:background="@drawable/user_filled_background"
+                android:drawableStart="@drawable/ic_search"
                 android:drawablePadding="8dp"
                 android:padding="8dp"
                 android:textColor="@color/text"
@@ -106,7 +106,7 @@
                     android:id="@+id/sample_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/rounded_corner2"
+                    android:background="@drawable/llm_filled_background"
                     android:paddingTop="30dp"
                     android:paddingBottom="8dp"
                     android:paddingHorizontal="8dp"
@@ -138,8 +138,8 @@
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
                     android:layout_margin="8dp"
-                    android:background="@drawable/rounded_button1"
-                    android:src="@drawable/copy"
+                    android:background="@drawable/copy_rounded_button"
+                    android:src="@drawable/ic_copy"
                     app:tint="@color/white"
                     android:visibility="gone" />
             </RelativeLayout>
@@ -155,8 +155,8 @@
         android:elevation="8dp"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/rounded_button"
-        android:src="@drawable/bottom_up"
+        android:background="@drawable/main_rounded_button"
+        android:src="@drawable/ic_bottom_up"
         android:visibility="gone"
         tools:visibility="visible" />
 
@@ -170,7 +170,7 @@
         android:orientation="vertical"
         android:gravity="center_horizontal"
         android:padding="15dp"
-        android:background="@drawable/rounded_edittext_border_search"
+        android:background="@drawable/hollow_background_4dp"
         android:visibility="invisible"
         tools:visibility="visible">
 
@@ -192,8 +192,8 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:progressBackgroundTint="#E8ECEF"
-            android:progressTint="#176379"
+            android:progressBackgroundTint="@color/humnod_shade"
+            android:progressTint="@color/humnod"
             android:indeterminate="false"
             android:max="100"
             android:visibility="invisible"
@@ -230,10 +230,10 @@
             android:layout_margin="18dp"
             android:elevation="8dp"
             android:textColor="@color/text"
-            android:background="@drawable/rounded_edittext_border_search"
+            android:background="@drawable/hollow_background_4dp"
             android:gravity="center_vertical"
             android:hint="Type your message"
-            android:textColorHint="#E8ECEF"
+            android:textColorHint="@color/humnod_shade"
             tools:ignore="Autofill" />
 
         <!-- Attach Button -->
@@ -242,10 +242,10 @@
             android:layout_width="40dp"
             android:layout_height="50dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/rounded_button"
+            android:background="@drawable/main_rounded_button"
             android:elevation="8dp"
             android:hapticFeedbackEnabled="true"
-            android:src="@drawable/attach"
+            android:src="@drawable/ic_attach"
             android:tint="@color/white"
             android:enabled="false"
             android:alpha="0.5"
@@ -258,9 +258,9 @@
             android:layout_height="50dp"
             android:layout_marginRight="5dp"
             android:elevation="8dp"
-            android:background="@drawable/rounded_button"
+            android:background="@drawable/main_rounded_button"
             android:hapticFeedbackEnabled="true"
-            android:src="@drawable/humnod_send"
+            android:src="@drawable/ic_send"
             android:tint="@color/white"
             android:enabled="false"
             android:alpha="0.5"
