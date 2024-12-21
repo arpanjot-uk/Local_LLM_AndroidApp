@@ -544,7 +544,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         if (!runWelcomeAnimation) return; // Do not start if already played
 
         welcomeAnimation.setVisibility(View.VISIBLE);
-        currentWelcomeFrame = 4930; // Reset to the first frame
+        currentWelcomeFrame = 4972; // Reset to the first frame
 
         welcomeRunnable = new Runnable() {
             @Override
@@ -557,14 +557,14 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 // Move to the next frame
                 currentWelcomeFrame++;
 
-                if (currentWelcomeFrame > 4965) {
+                if (currentWelcomeFrame > 5008) {
                     // Stop the animation after completing the sequence
                     return;
                 }
 
                 // Determine the delay based on the current frame
                 long delay;
-                if (currentWelcomeFrame > 4960 && currentWelcomeFrame <= 4965) {
+                if (currentWelcomeFrame > 5004 && currentWelcomeFrame <= 5008) {
                     delay = 400; // Slower delay for frames 4961-4965
                 } else {
                     delay = 100; // Default delay for other frames
@@ -746,7 +746,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                         if (!isCharLimitOn) {
                             isCharInLimit = false; // User for settings apply filter
                             isCharLimitOn = true;
-                            Toast.makeText(MainActivity.this, "Please enter at least 12 characters.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Please enter at least 12 characters", Toast.LENGTH_SHORT).show();
                         }
 
                         attachFileIB.setEnabled(false); // Disable input field to prevent editing

@@ -205,7 +205,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:src="@drawable/frame_1000004930"
+        android:src="@drawable/frame_1000004972"
         android:elevation="20dp"
         android:visibility="invisible"
         tools:visibility="visible"/>
