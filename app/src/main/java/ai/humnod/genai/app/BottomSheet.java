@@ -117,6 +117,10 @@ public class BottomSheet extends BottomSheetDialogFragment {
                 return;
             }
 
+            // Save settings using DataManager
+            DataManager dataManager = new DataManager(requireContext());
+            dataManager.saveSettings(maxLength, lengthPenalty, agentMode);
+
             // If validation passes, apply the settings
             if (settingsListener != null) {
                 settingsListener.onSettingsApplied(maxLength, lengthPenalty, agentMode);

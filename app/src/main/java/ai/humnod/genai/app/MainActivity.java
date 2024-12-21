@@ -70,6 +70,8 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 
+import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity implements Consumer<String> {
 
     private ActivityMainBinding binding;
@@ -660,6 +662,27 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             throw new RuntimeException(e);
         }
 
+        // Initialize DataManager
+        DataManager dataManager = new DataManager(this);
+        // Check for first launch
+        if (dataManager.isFirstLaunch()) {
+            // Handle first launch logic
+            Toast.makeText(this, "Welcome to HumNod Lite!", Toast.LENGTH_SHORT).show();
+            dataManager.setFirstLaunch(false);
+        }
+        // Load saved settings
+        JSONObject savedSettings = dataManager.loadSettings();
+        if (savedSettings != null) {
+            maxLength = savedSettings.optInt("maxLength", 1000); // Default 1000
+            lengthPenalty = (float) savedSettings.optDouble("lengthPenalty", 1.0); // Default 1.0
+            agentMode = savedSettings.optString("agentMode", "Assistant"); // Default "Assistant"
+
+            // Apply these settings in your app logic (e.g., configure BottomSheet or app behavior)
+            // Example:
+            Log.d("MainActivity", "Loaded settings: maxLength=" + maxLength +
+                    ", lengthPenalty=" + lengthPenalty +
+                    ", agentMode=" + agentMode);
+        }
 
         websiteButton.setOnClickListener(v -> {
             String url = "https://humnod.com/home";
