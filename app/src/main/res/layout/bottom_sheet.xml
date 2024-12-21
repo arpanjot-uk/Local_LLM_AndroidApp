@@ -19,7 +19,8 @@
         android:background="@drawable/main_rounded_button"
         android:hapticFeedbackEnabled="true"
         android:src="@drawable/ic_close"
-        tools:ignore="UseAppTint" />
+        tools:ignore="UseAppTint"
+        android:contentDescription="Close settings"/>
 
     <!-- Settings Page Title -->
     <TextView
@@ -37,7 +38,8 @@
         android:text="Settings"
         android:textColor="@color/text"
         android:textSize="30sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:contentDescription="Page title"/>
 
     <!-- Container for Max Response Length -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -63,7 +65,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/idEdtMaxLength"
             app:layout_constraintBottom_toBottomOf="@+id/idEdtMaxLength"
-            app:layout_constraintHorizontal_chainStyle="packed" />
+            app:layout_constraintHorizontal_chainStyle="packed"
+            android:contentDescription="LLM max response lenght text"/>
 
         <!-- Max Response Length EditText -->
         <EditText
@@ -81,7 +84,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tvMaxLength"
-            app:layout_constraintWidth_percent="0.5" />
+            app:layout_constraintWidth_percent="0.5"
+            android:contentDescription="LLM max response lenght input"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Container for Length Penalty -->
@@ -108,7 +112,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/idEdtLengthPenalty"
             app:layout_constraintBottom_toBottomOf="@+id/idEdtLengthPenalty"
-            app:layout_constraintHorizontal_chainStyle="packed" />
+            app:layout_constraintHorizontal_chainStyle="packed"
+            android:contentDescription="LLM max response penalty text"/>
 
         <!-- Length Penalty EditText -->
         <EditText
@@ -126,7 +131,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tvLengthPenalty"
-            app:layout_constraintWidth_percent="0.5" />
+            app:layout_constraintWidth_percent="0.5"
+            android:contentDescription="LLM max response penalty input"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Container for Agent Type -->
@@ -153,7 +159,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/idSpinnerResponseMode"
             app:layout_constraintBottom_toBottomOf="@+id/idSpinnerResponseMode"
-            app:layout_constraintHorizontal_chainStyle="packed" />
+            app:layout_constraintHorizontal_chainStyle="packed"
+            android:contentDescription="LLM agent type text"/>
 
         <!-- Agent Type Spinner -->
         <Spinner
@@ -169,7 +176,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tvAgentType"
             android:textColor="@color/text"
-            app:layout_constraintWidth_percent="0.5" />
+            app:layout_constraintWidth_percent="0.5"
+            android:contentDescription="LLM agent type input"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Attach Button -->
@@ -182,10 +190,10 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/main_rounded_button"
         android:src="@drawable/ic_apply"
-        android:contentDescription="Attach button"
         android:hapticFeedbackEnabled="true"
         android:elevation="8dp"
-        android:visibility="visible" />
+        android:visibility="visible"
+        android:contentDescription="Apply LLM data processing settings"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/emptyContainer"
@@ -222,7 +230,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/helpButton"
-            app:layout_constraintHorizontal_chainStyle="packed" />
+            app:layout_constraintHorizontal_chainStyle="packed"
+            android:contentDescription="Help page text"/>
 
         <!-- Help Button -->
         <ImageButton
@@ -232,12 +241,12 @@
             android:layout_marginStart="16dp"
             android:background="@drawable/main_rounded_button"
             android:src="@drawable/ic_help"
-            android:contentDescription="Help button"
             android:hapticFeedbackEnabled="true"
             app:tint="@color/white"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            android:contentDescription="Help page on HumNod"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
