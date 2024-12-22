@@ -872,7 +872,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
                 if (tokenizer == null) {
                     // if user tries to submit prompt while model is still downloading, display a toast message.
-                    Toast.makeText(MainActivity.this, "Model not loaded yet, please wait...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Model not loaded yet, please wait", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -880,7 +880,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                 // by user is empty or not.
                 if (userMsgEdt.getText().toString().isEmpty()) {
                     // if the edit text is empty display a toast message.
-                    Toast.makeText(MainActivity.this, "Please enter your message...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Please enter your message", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -1001,7 +1001,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
 
                                         if (averageTokenTime > 1000) { // 1000 milliseconds = 1 seconds
                                             runOnUiThread(() -> {
-                                                Toast.makeText(MainActivity.this, "Processing is taking too long due to large input. Please provide a smaller input.", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(MainActivity.this, "Processing is taking too long due to large input", Toast.LENGTH_LONG).show();
                                             });
                                             isGenerating = false;
                                             break;
@@ -1132,8 +1132,8 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
         });
 
         Toast.makeText(this,
-                "Downloading model for the app... Model Size greater than 2GB, please allow a few minutes to download.",
-                Toast.LENGTH_SHORT).show();
+                "HumNod Lite Model Size 2GB",
+                Toast.LENGTH_LONG).show();
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
@@ -1160,7 +1160,6 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
                         model = new Model(getFilesDir().getPath());
                         tokenizer = model.createTokenizer();
                         runOnUiThread(() -> {
-                            Toast.makeText(context, "HumNod Lite download completed", Toast.LENGTH_SHORT).show();
                             progressBar.setVisibility(View.INVISIBLE); // Hide the progress bar when done
                             progressText.setVisibility(View.INVISIBLE); // Hide the progress text when done
                             progressContainer.setVisibility(View.INVISIBLE);

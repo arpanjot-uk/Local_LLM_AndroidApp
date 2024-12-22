@@ -16,15 +16,9 @@
         android:maxSdkVersion="29" />
 
     <!-- Storage Permissions for Android 13 and above (API level 33+) -->
-    <uses-permission
-        android:name="android.permission.READ_MEDIA_IMAGES"
-        android:minSdkVersion="33" />
-    <uses-permission
-        android:name="android.permission.READ_MEDIA_VIDEO"
-        android:minSdkVersion="33" />
-    <uses-permission
-        android:name="android.permission.READ_MEDIA_AUDIO"
-        android:minSdkVersion="33" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
     <application
         android:allowBackup="true"
@@ -36,12 +30,29 @@
         android:roundIcon="@drawable/ic_humnod_large"
         android:supportsRtl="true"
         android:theme="@style/Theme.ORTGenAIDemo"
-        android:requestLegacyExternalStorage="true"
-        tools:targetApi="31">
+        android:requestLegacyExternalStorage="true">
 
 
         <activity
+            android:name=".OnboardingActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|screenSize"
+            android:exported="false" />
+
+        <!-- Main Activity -->
+        <activity
             android:name=".MainActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|screenSize"
+            android:exported="false" />
+
+        <!-- Hub Activity (Launcher Activity) -->
+        <activity
+            android:name=".HubActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"

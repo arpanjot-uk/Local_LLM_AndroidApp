@@ -61,5 +61,7 @@ dependencies {
 
     implementation ("com.itextpdf:itext7-core:7.2.3")
 
+    implementation ("pl.droidsonroids.gif:android-gif-drawable:1.2.24")
+
 
 }

@@ -34,6 +34,7 @@
         android:layout_marginEnd="16dp"
         android:gravity="center"
         android:elevation="8dp"
+        android:fontFamily="@font/karla_semi_bold"
         android:layout_toStartOf="@id/close_button"
         android:text="Settings"
         android:textColor="@color/text"
@@ -61,6 +62,7 @@
             android:text="Max Response Length"
             android:textSize="16sp"
             android:textColor="@color/text"
+            android:fontFamily="@font/karla_regular"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/idEdtMaxLength"
@@ -74,12 +76,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:hint="Enter max response length"
-            android:text="100"
+            android:hint="2000"
+            android:text="2000"
             android:background="@drawable/hollow_background_2dp"
             android:padding="12dp"
             android:gravity="center"
             android:textColor="@color/text"
+            android:fontFamily="@font/karla_regular"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -108,6 +111,7 @@
             android:text="Length Penalty"
             android:textSize="16sp"
             android:textColor="@color/text"
+            android:fontFamily="@font/karla_regular"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/idEdtLengthPenalty"
@@ -121,12 +125,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:inputType="number|numberDecimal"
-            android:hint="Enter length penalty"
+            android:hint="1.0"
             android:text="1.0"
             android:background="@drawable/hollow_background_2dp"
             android:padding="12dp"
             android:gravity="center"
             android:textColor="@color/text"
+            android:fontFamily="@font/karla_regular"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -155,6 +160,7 @@
             android:text="Agent Type"
             android:textSize="16sp"
             android:textColor="@color/text"
+            android:fontFamily="@font/karla_regular"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/idSpinnerResponseMode"
@@ -176,6 +182,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tvAgentType"
             android:textColor="@color/text"
+            android:fontFamily="@font/karla_regular"
             app:layout_constraintWidth_percent="0.5"
             android:contentDescription="LLM agent type input"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -226,6 +233,7 @@
             android:textSize="16sp"
             android:textColor="@color/text"
             android:layout_marginRight="16dp"
+            android:fontFamily="@font/karla_regular"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -249,7 +257,4 @@
             android:contentDescription="Help page on HumNod"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
 </RelativeLayout>
