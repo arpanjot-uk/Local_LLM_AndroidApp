@@ -27,7 +27,7 @@
             android:layout_height="40dp"
             android:layout_alignParentStart="true"
             android:layout_marginEnd="10dp"
-            android:background="@drawable/main_rounded_button"
+            android:background="@drawable/copy_rounded_button"
             android:hapticFeedbackEnabled="true"
             android:src="@drawable/ic_skip"
             android:tint="@color/white"
