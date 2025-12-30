@@ -14,3 +14,8 @@ You can also optimize your fine-tuned PyTorch Phi-3 model for mobile usage follo
 - Android SDK 29+
 - Android NDK r22+
 - An Android device or an Android Emulator
+
+
+
+Key: humnod
+Pass Both: 245632

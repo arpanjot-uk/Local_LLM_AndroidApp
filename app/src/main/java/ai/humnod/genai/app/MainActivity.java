@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity implements Consumer<String> 
             String fileContent = stringBuilder.toString();
 
             if (!fileContent.isEmpty()) {
-                // Process and summarize the content using DocumentProcessor
+                // Process and summarise the content using DocumentProcessor
                 String summaryDocument = DocumentProcessor.processAndSummarizeContent(fileContent, 50);
 
                 // Handle the result
