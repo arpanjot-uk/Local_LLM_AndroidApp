@@ -1,53 +1,67 @@
-# HumNod - Offline AI Assistant for Android
+# HumNod - Local LLM Android Assistant & Framework
 
-**HumNod** is a privacy-first, fully offline Android application that brings the power of Large Language Models (LLMs) directly to your mobile device. Built using Java and the Microsoft ONNX Runtime Generative AI API, HumNod allows you to chat, analyze documents, and extract text from images without ever needing an internet connection for inference.
+Welcome to the official repository for **HumNod**, a cutting-edge, privacy-centric Android application that democratizes access to artificial intelligence by running advanced Large Language Models (LLMs) entirely on your local mobile hardware. 
 
-[![HumNod Demo Video](https://img.youtube.com/vi/yTYgDmDwdxM/0.jpg)](https://www.youtube.com/watch?v=yTYgDmDwdxM "HumNod - Offline AI Assistant")
+In an era where cloud computing raises severe data privacy concerns and requires constant internet connectivity, HumNod provides a robust alternative. By leveraging the Microsoft ONNX Runtime Generative AI API and native Android frameworks, this application transforms your smartphone into an offline powerhouse capable of context-aware chatting, physical document analysis (Local RAG), and real-time image text extraction, all without a single byte of your personal data ever leaving your device.
+
+Whether you are an end-user looking for a secure AI companion or an Android developer seeking a highly structured foundational framework to build your own local AI apps, this repository provides everything you need.
+
+[![HumNod Demo Video](https://img.youtube.com/vi/yTYgDmDwdxM/0.jpg)](https://www.youtube.com/watch?v=yTYgDmDwdxM "HumNod - Offline AI Assistant Demo")
 
 *(Click the image above to watch the HumNod demo on YouTube)*
 
-## 🌟 Key Features
+---
 
-* 🔒 **100% Offline & Private**: All AI inference happens locally on your device's CPU/NPU. Your prompts, documents, and images never leave your phone.
+## 🌟 Comprehensive Feature Set
 
-* 🧠 **On-Device Model Hub**: Download, manage, and switch between quantized LLMs (like Phi-3 or Llama 3) directly from the app's `HubActivity`.
+### 🔒 Zero-Trust Privacy & 100% Offline Inference
+HumNod does not rely on API keys, cloud servers, or external internet connections for text generation. Once the initial LLM weights are downloaded, your device's CPU/NPU handles all the computational heavy lifting locally.
 
-* 📄 **Chat with Documents (Local RAG)**: Upload `.txt`, `.pdf`, or `.md` files. HumNod's built-in `DocumentProcessor` extracts the text and injects it into the LLM's context window.
+### 🧠 On-Device Model Hub
+The app features a built-in model management system (`HubActivity`). Users can easily browse, download, and seamlessly switch between highly optimized, quantized state-of-the-art open-source models (such as Microsoft's Phi-3 or Meta's Llama 3) directly to their device storage. 
 
-* 📸 **Image OCR Integration**: Attach images (photos or screenshots) to the chat. The `OCRHelper` utilises on-device ML Vision to extract text for the LLM to analyze.
+### 📄 Local Retrieval-Augmented Generation (RAG)
+Chatting with your documents has never been more secure. Using the custom `DocumentProcessor.java` module, users can upload `.txt`, `.pdf`, and `.md` files directly into the chat interface. HumNod automatically extracts the text, cleans the formatting, and injects it into the LLM's context window, allowing you to ask questions about your specific offline data.
 
-* ⚙️ **Advanced Generation Settings**: Fine-tune your AI's responses on the fly using the built-in Settings menu. Adjust Max Response Length, Length Penalty, and Agent Types.
+### 📸 Seamless Image OCR Integration
+Need to analyze a screenshot or a photo of a physical document? Attach images directly to your prompt. HumNod utilizes Google ML Kit's on-device Vision libraries via `OCRHelper.java` to read the text inside the image and feed it to the AI for instant analysis and summarization.
 
-* ✨ **Rich & Intuitive UI**: Enjoy a modern chat interface with dynamic visual feedback (GIF animations), custom typography (Karla font), and light/dark mode support.
+### ⚙️ Granular Generation Controls
+Take complete control over how the AI responds using the intuitive `BottomSheet` UI. You can tweak generation parameters in real-time without interrupting your workflow:
+* **Max Response Length:** Control token output limits.
+* **Length Penalty:** Force the model to be concise or highly descriptive.
+* **Agent Type:** Alter the system prompt to change the persona of the AI (e.g., Academic, Casual, Coding Assistant).
 
-## 🏗️ Architecture & Codebase
+---
 
-HumNod is built natively for Android using Java. Here is a quick overview of the core components:
+## 🏗️ Technical Architecture & Codebase Deep Dive
 
-* **`MainActivity.java`**: The core chat interface. It handles user inputs, manages the chat session, and interfaces directly with the ONNX Runtime engine.
+HumNod is built entirely in Java, prioritizing performance, stability, and clean architectural patterns.
 
-* **`HubActivity.java` & `ModelDownloader.java`**: Acts as the central dashboard for fetching LLM artifacts (e.g., `.onnx`, `.bin` weights) from remote servers to local storage and managing the active model.
+* **`MainActivity.java`**: The nerve center of the application. It acts as the bridge between the Android UI and the underlying C++ inference engine. It manages the active chat session, handles token streaming UI updates, and orchestrates user inputs.
+* **ONNX Runtime Engine (`onnxruntime-genai-android-0.4.0-dev.aar`)**: Located in `app/libs/`, this pre-compiled AAR library provides the highly optimized execution environment for `.onnx` models, utilizing JNI to interface with the device's hardware.
+* **`ModelDownloader.java`**: A robust background service responsible for safely fetching heavy model artifacts (`.onnx` weights, `.bin` configurations, tokenizers) from remote servers to local storage, complete with interrupt-resume capabilities.
+* **Dynamic UI Rendering**: Found in `app/src/main/res/`, the UI uses optimized XML layouts and dynamic custom drawables (like `ic_animation_bear.gif` and dynamic corner radii) to provide a fluid, modern user experience while the model is actively streaming tokens.
 
-* **`DocumentProcessor.java` & `OCRHelper.java`**: The utility classes are responsible for parsing text from physical files and images to provide contextual data to the LLM.
-
-* **ONNX Runtime (`onnxruntime-genai-android`)**: The heavy lifting is done via a pre-compiled AAR library located in `app/libs/`, providing highly optimized C++ inference engines with JNI bindings for mobile processors.
+---
 
 ## 🚀 Getting Started
 
-### Prerequisites
+### System Requirements
+Running local LLMs requires modern mobile hardware. To ensure smooth generation speeds (Tokens Per Second):
+* **RAM**: Minimum 4GB (6GB+ highly recommended for 3B+ parameter models).
+* **Storage**: At least 2GB to 5GB of free space, depending on the quantized model downloaded.
+* **OS**: Android 10 (API Level 29) or higher.
 
-* [Android Studio](https://developer.android.com/studio) (Latest version recommended)
+### Developer Setup & Build Instructions
 
-* An Android device or emulator with sufficient RAM and storage to hold and run quantized LLM models (4GB+ RAM recommended, depending on the model size).
-
-### Build Instructions
-
-1. **Clone the repository:**
-
+1. **Clone the Source Code:**
+   Open your terminal and clone the repository:
    ```bash
    git clone [https://github.com/yourusername/Local_LLM_AndroidApp.git](https://github.com/yourusername/Local_LLM_AndroidApp.git)
    cd Local_LLM_AndroidApp
-
-```c
-Key: humnod
-Pass Both: 245632
+   ```
+   ```c
+   Key: humnod
+   Pass Both: 245632
+   ```
