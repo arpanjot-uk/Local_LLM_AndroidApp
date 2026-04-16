@@ -49,18 +49,45 @@ HumNod is built entirely in Java, prioritizing performance, stability, and clean
 
 ### System Requirements
 Running local LLMs requires modern mobile hardware. To ensure smooth generation speeds (Tokens Per Second):
-* **RAM**: Minimum 4GB (6GB+ highly recommended for 3B+ parameter models).
-* **Storage**: At least 2GB to 5GB of free space, depending on the quantized model downloaded.
-* **OS**: Android 10 (API Level 29) or higher.
+* **RAM:** Minimum 4GB (6GB+ highly recommended for 3B+ parameter models).
+* **Storage:** At least 2GB to 5GB of free space depending on the quantized model downloaded.
+* **OS:** Android 10 (API Level 29) or higher.
 
 ### Developer Setup & Build Instructions
 
-1. **Clone the Source Code:**
-   Open your terminal and clone the repository:
-   ```bash
-   git clone [https://github.com/yourusername/Local_LLM_AndroidApp.git](https://github.com/yourusername/Local_LLM_AndroidApp.git)
-   cd Local_LLM_AndroidApp
-   ```
+1.  **Clone the Source Code:**
+    Open your terminal and clone the repository:
+    ```bash
+    git clone [https://github.com/yourusername/Local_LLM_AndroidApp.git](https://github.com/yourusername/Local_LLM_AndroidApp.git)
+    cd Local_LLM_AndroidApp
+    ```
+
+2.  **Open in Android Studio:**
+    Launch Android Studio (latest stable release recommended). Select **File > Open** and navigate to your cloned directory.
+
+3.  **Verify Dependencies:**
+    Allow Android Studio to sync the Gradle build files. **Crucial step:** Ensure that the local library `app/libs/onnxruntime-genai-android-0.4.0-dev.aar` is properly recognized, as the project will not compile without the ONNX GenAI bindings.
+
+4.  **Compile and Run:**
+    Connect a physical Android device with USB Debugging enabled. Emulators are generally too slow for local LLM inference testing unless hardware acceleration is heavily optimized. Click **Run (Shift + F10)**.
+
+> **Note:** On your very first launch, you will need an active Wi-Fi connection to download your preferred LLM package via the Hub dashboard. Once the download is verified, you can safely turn on Airplane Mode and use the app indefinitely.
+
+---
+
+## 🤝 Contributing
+We welcome contributions from the Android and Open-Source AI community! Whether you want to add support for new file types in the `DocumentProcessor`, optimize the UI with Jetpack Compose, or add support for newer ONNX execution providers, please feel free to fork the repository and submit a pull request.
+
+1.  Fork the Project
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the Branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
+
+---
+
+## 🛡️ License
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details. This open-source framework is intended to help developers build secure, local-first applications.
    ```c
    Key: humnod
    Pass Both: 245632
